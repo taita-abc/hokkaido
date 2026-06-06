@@ -12,11 +12,9 @@
   --paper: #fffdf2;
   --gold: #ffd66e;
   --green: #16a06f;
-  --red: #e84545;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -26,60 +24,49 @@ body {
   min-height: 100vh;
 }
 
-/* ========= HEADER ========= */
+/* ===== HEADER ===== */
 header {
   background: linear-gradient(135deg, #1a3f7a, #2d62ad, #87bfff);
   color: white;
-  padding: 28px 16px 24px;
+  padding: 24px 16px 20px;
   text-align: center;
   border-bottom: 5px solid var(--ink);
   position: relative;
   overflow: hidden;
 }
-
 header::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 20px,
-    rgba(255,255,255,0.03) 20px,
-    rgba(255,255,255,0.03) 40px
-  );
+  background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px);
 }
-
 header h1 {
-  font-size: clamp(1.8rem, 7vw, 3.6rem);
+  font-size: clamp(1.6rem, 6vw, 3rem);
   font-weight: 900;
   line-height: 1.1;
-  letter-spacing: -0.02em;
   position: relative;
 }
-
 header .sub {
-  font-size: clamp(0.85rem, 3vw, 1.1rem);
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
   font-weight: 700;
   opacity: 0.9;
-  margin-top: 6px;
+  margin-top: 5px;
   position: relative;
 }
-
 header .date-badge {
   display: inline-block;
   background: var(--gold);
   color: var(--ink);
   border: 3px solid var(--ink);
   border-radius: 999px;
-  padding: 5px 14px;
+  padding: 4px 14px;
   font-weight: 900;
-  font-size: 0.85rem;
-  margin-top: 10px;
+  font-size: 0.82rem;
+  margin-top: 8px;
   position: relative;
 }
 
-/* ========= NAV ========= */
+/* ===== NAV ===== */
 nav {
   position: sticky;
   top: 0;
@@ -93,33 +80,39 @@ nav {
   overflow-x: auto;
   scrollbar-width: none;
 }
-
 nav::-webkit-scrollbar { display: none; }
-
-nav a {
+nav button {
   flex: 0 0 auto;
-  text-decoration: none;
   background: white;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  padding: 7px 13px;
+  padding: 7px 14px;
   font-weight: 900;
   font-size: 0.82rem;
   color: var(--ink);
+  cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+nav button:hover { background: var(--gold); }
+nav button.active {
+  background: var(--ink);
+  color: white;
 }
 
-nav a:hover { background: var(--gold); }
-
-/* ========= MAIN LAYOUT ========= */
+/* ===== LAYOUT ===== */
 .app {
   max-width: 900px;
   margin: 0 auto;
   padding: 16px 12px 80px;
 }
 
-/* ========= SECTION ========= */
+/* ===== PAGE (show/hide) ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== SECTION ===== */
 section {
   background: var(--paper);
   border: 4px solid var(--ink);
@@ -128,14 +121,12 @@ section {
   padding: 16px;
   box-shadow: 6px 6px 0 var(--ink);
 }
-
 .sec-head {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
 }
-
 .sec-label {
   background: var(--ink);
   color: white;
@@ -146,112 +137,43 @@ section {
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
-
 .sec-head h2 {
   font-size: clamp(1.2rem, 4vw, 1.8rem);
   font-weight: 900;
 }
 
-/* ========= COVER BOOK ========= */
-.book {
-  background: linear-gradient(160deg, var(--paper), #fff5c0);
-  border: 4px solid var(--ink);
-  border-radius: 20px;
-  padding: 18px;
-  box-shadow: 5px 5px 0 var(--ink);
-}
-
-.ribbon {
-  display: inline-block;
-  background: var(--ink);
-  color: white;
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-weight: 900;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  margin-bottom: 10px;
-}
-
-.book h2 {
-  font-size: clamp(1.3rem, 5vw, 2rem);
-  font-weight: 900;
-  line-height: 1.3;
-  margin-bottom: 10px;
-}
-
-.book p {
-  color: #4a5568;
-  line-height: 1.7;
-  margin-bottom: 14px;
-}
-
-/* ========= MAP ========= */
+/* ===== HOME ===== */
 .map-box {
   background: linear-gradient(145deg, #d4eeff, #b8e8c4);
   border: 3px solid var(--ink);
   border-radius: 16px;
   padding: 14px;
+  margin-bottom: 14px;
 }
-
 .hokkaido-shape {
-  width: min(90%, 380px);
-  height: 130px;
-  margin: 12px auto;
-  clip-path: polygon(
-    5% 50%, 18% 27%, 39% 17%, 54% 25%,
-    66% 9%, 79% 29%, 95% 45%,
-    82% 61%, 61% 63%, 45% 80%,
-    31% 66%, 13% 72%
-  );
+  width: min(90%, 340px);
+  height: 110px;
+  margin: 10px auto;
+  clip-path: polygon(5% 50%, 18% 27%, 39% 17%, 54% 25%, 66% 9%, 79% 29%, 95% 45%, 82% 61%, 61% 63%, 45% 80%, 31% 66%, 13% 72%);
   background: linear-gradient(135deg, #5cb85c, #d4c037);
   border: 4px solid var(--ink);
 }
-
 .pins {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0;
+  gap: 5px;
+  margin-top: 10px;
 }
-
 .pin {
   background: white;
   border: 2px solid var(--ink);
   border-radius: 999px;
-  padding: 5px 10px;
+  padding: 4px 10px;
   font-weight: 900;
-  font-size: 0.82rem;
-  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 0.78rem;
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
-.btn-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.btn {
-  background: var(--blue);
-  color: white;
-  text-decoration: none;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  padding: 10px 16px;
-  font-weight: 900;
-  font-size: 0.9rem;
-  box-shadow: 4px 4px 0 var(--ink);
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
-.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
-.btn.green { background: var(--green); }
-.btn.gold { background: var(--gold); color: var(--ink); }
-
-/* ========= HOME TILES ========= */
 .speech-box {
   background: white;
   border: 3px solid var(--ink);
@@ -259,27 +181,20 @@ section {
   padding: 14px;
   box-shadow: 4px 4px 0 var(--ink);
   display: grid;
-  grid-template-columns: 70px 1fr;
+  grid-template-columns: 60px 1fr;
   gap: 12px;
   align-items: center;
   margin-bottom: 14px;
 }
-
-.mascot-icon {
-  font-size: 3rem;
-  text-align: center;
-  line-height: 1;
-}
-
-.speech-box b { display: block; font-size: 1rem; margin-bottom: 4px; }
-.speech-box p { color: #4a5568; font-size: 0.88rem; line-height: 1.6; }
+.mascot-icon { font-size: 2.6rem; text-align: center; }
+.speech-box b { display: block; font-size: 0.95rem; margin-bottom: 4px; }
+.speech-box p { color: #4a5568; font-size: 0.84rem; line-height: 1.6; }
 
 .tile-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
-
 .tile {
   background: white;
   border: 3px solid var(--ink);
@@ -288,29 +203,77 @@ section {
   box-shadow: 4px 4px 0 var(--ink);
   text-decoration: none;
   color: var(--ink);
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-height: 90px;
-  justify-content: center;
   transition: transform 0.1s, box-shadow 0.1s;
 }
-
 .tile:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
 .tile b { font-size: 0.95rem; font-weight: 900; }
-.tile small { color: #5d6678; font-size: 0.78rem; }
+.tile small { color: #5d6678; font-size: 0.76rem; }
+.tile .tile-btn {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 900;
+  font-size: 0.76rem;
+  box-shadow: 2px 2px 0 var(--ink);
+  margin-top: 4px;
+  align-self: flex-start;
+}
 
-/* ========= TRAINER CARDS ========= */
+/* ===== SCHEDULE ===== */
+.schedule-day { margin-bottom: 16px; }
+.day-header {
+  background: var(--ink);
+  color: white;
+  border-radius: 10px 10px 0 0;
+  padding: 8px 14px;
+  font-weight: 900;
+  font-size: 0.88rem;
+}
+.schedule-items {
+  border: 3px solid var(--ink);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+.schedule-item {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  border-bottom: 2px solid #e8e0d0;
+  background: white;
+}
+.schedule-item:last-child { border-bottom: none; }
+.s-time {
+  background: #f0ead8;
+  padding: 10px 6px;
+  font-weight: 900;
+  font-size: 0.76rem;
+  text-align: center;
+  border-right: 2px solid #e8e0d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.s-content { padding: 10px 12px; }
+.s-content b { display: block; font-size: 0.86rem; margin-bottom: 2px; }
+.s-content small { color: #5d6678; font-size: 0.76rem; line-height: 1.5; }
+
+/* ===== TRAINER ===== */
 .trainer-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-
 @media (min-width: 600px) {
   .trainer-grid { grid-template-columns: repeat(4, 1fr); }
 }
-
 .trainer-card {
   background: white;
   border: 3px solid var(--ink);
@@ -319,56 +282,19 @@ section {
   box-shadow: 4px 4px 0 var(--ink);
   text-align: center;
 }
-
 .dex-no {
   display: inline-block;
   background: var(--blue);
   color: white;
   border-radius: 999px;
   padding: 3px 8px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 900;
   margin-bottom: 6px;
 }
-
-.trainer-card h3 {
-  font-size: 1.1rem;
-  font-weight: 900;
-  margin-bottom: 6px;
-}
-
-.lv-badge {
-  display: inline-block;
-  background: var(--gold);
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  padding: 3px 8px;
-  font-weight: 900;
-  font-size: 0.78rem;
-  margin-bottom: 4px;
-}
-
-.trainer-card .role {
-  color: var(--blue);
-  font-weight: 900;
-  font-size: 0.82rem;
-  margin-bottom: 4px;
-}
-
-.trainer-card .type {
-  font-size: 0.78rem;
-  margin-bottom: 4px;
-}
-
-.trainer-card .note {
-  font-size: 0.75rem;
-  color: #5d6678;
-  line-height: 1.5;
-}
-
 .img-placeholder {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   background: linear-gradient(135deg, #dfeaff, #c8d8f0);
   border: 2px dashed #aab;
   border-radius: 12px;
@@ -378,18 +304,30 @@ section {
   justify-content: center;
   font-size: 2rem;
 }
+.trainer-card h3 { font-size: 1.05rem; font-weight: 900; margin-bottom: 5px; }
+.lv-badge {
+  display: inline-block;
+  background: var(--gold);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-weight: 900;
+  font-size: 0.76rem;
+  margin-bottom: 4px;
+}
+.trainer-card .role { color: var(--blue); font-weight: 900; font-size: 0.8rem; margin-bottom: 3px; }
+.trainer-card .type { font-size: 0.75rem; margin-bottom: 2px; }
+.trainer-card .note { font-size: 0.72rem; color: #5d6678; line-height: 1.5; margin-top: 4px; }
 
-/* ========= CREATURE DEX ========= */
+/* ===== CREATURES ===== */
 .creature-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
-
 @media (min-width: 600px) {
   .creature-grid { grid-template-columns: repeat(3, 1fr); }
 }
-
 .creature-card {
   background: white;
   border: 3px solid var(--ink);
@@ -398,70 +336,12 @@ section {
   box-shadow: 4px 4px 0 var(--ink);
   text-align: center;
 }
+.creature-card .img-placeholder { width: 68px; height: 68px; font-size: 1.8rem; }
+.creature-card h3 { font-size: 0.9rem; font-weight: 900; margin-bottom: 3px; }
+.creature-card .cat { color: var(--blue); font-weight: 900; font-size: 0.72rem; margin-bottom: 2px; }
+.creature-card .loc { font-size: 0.7rem; color: #5d6678; }
 
-.creature-card .img-placeholder {
-  width: 72px;
-  height: 72px;
-  font-size: 1.8rem;
-}
-
-.creature-card h3 { font-size: 0.95rem; font-weight: 900; margin-bottom: 3px; }
-.creature-card .cat { color: var(--blue); font-weight: 900; font-size: 0.75rem; margin-bottom: 3px; }
-.creature-card .loc { font-size: 0.72rem; color: #5d6678; }
-
-/* ========= SCHEDULE ========= */
-.schedule-day {
-  margin-bottom: 16px;
-}
-
-.day-header {
-  background: var(--ink);
-  color: white;
-  border-radius: 10px 10px 0 0;
-  padding: 8px 14px;
-  font-weight: 900;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.schedule-items {
-  border: 3px solid var(--ink);
-  border-top: none;
-  border-radius: 0 0 10px 10px;
-  overflow: hidden;
-}
-
-.schedule-item {
-  display: grid;
-  grid-template-columns: 70px 1fr;
-  border-bottom: 2px solid #e8e0d0;
-  background: white;
-}
-
-.schedule-item:last-child { border-bottom: none; }
-
-.s-time {
-  background: #f0ead8;
-  padding: 10px 8px;
-  font-weight: 900;
-  font-size: 0.8rem;
-  text-align: center;
-  border-right: 2px solid #e8e0d0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.s-content {
-  padding: 10px 12px;
-}
-
-.s-content b { display: block; font-size: 0.88rem; margin-bottom: 2px; }
-.s-content small { color: #5d6678; font-size: 0.78rem; line-height: 1.5; }
-
-/* ========= BADGE CASE ========= */
+/* ===== BADGES ===== */
 .progress-box {
   background: var(--ink);
   color: white;
@@ -469,38 +349,32 @@ section {
   padding: 14px;
   margin-bottom: 14px;
 }
-
 .prog-row {
   display: flex;
   justify-content: space-between;
   font-weight: 900;
   margin-bottom: 8px;
 }
-
 .prog-bar {
   height: 14px;
   background: rgba(255,255,255,0.2);
   border-radius: 999px;
   overflow: hidden;
 }
-
 #prog-fill {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--gold), #ffad57);
   transition: width 0.3s ease;
 }
-
 .badge-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
-
 @media (min-width: 600px) {
   .badge-grid { grid-template-columns: repeat(4, 1fr); }
 }
-
 .badge-item {
   background: white;
   border: 3px solid var(--ink);
@@ -508,53 +382,28 @@ section {
   padding: 12px 10px;
   box-shadow: 4px 4px 0 var(--ink);
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
   text-align: center;
   position: relative;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
-
 .badge-item:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
-
 .badge-item.earned {
   background: linear-gradient(135deg, #fff9e6, #fff0b0);
   border-color: var(--gold);
   box-shadow: 4px 4px 0 #c89a00;
 }
-
 .badge-icon {
-  font-size: 2.2rem;
-  margin-bottom: 6px;
+  font-size: 2rem;
+  margin-bottom: 5px;
   display: block;
   filter: grayscale(1) opacity(0.3);
   transition: filter 0.3s;
 }
-
 .badge-item.earned .badge-icon { filter: none; }
-
-.badge-name {
-  font-weight: 900;
-  font-size: 0.8rem;
-  display: block;
-  margin-bottom: 2px;
-}
-
-.badge-desc {
-  font-size: 0.68rem;
-  color: #5d6678;
-  line-height: 1.4;
-}
-
-.badge-check {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 1rem;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
+.badge-name { font-weight: 900; font-size: 0.78rem; display: block; margin-bottom: 2px; }
+.badge-desc { font-size: 0.66rem; color: #5d6678; line-height: 1.4; }
+.badge-check { position: absolute; top: 5px; right: 7px; font-size: 0.9rem; opacity: 0; transition: opacity 0.2s; }
 .badge-item.earned .badge-check { opacity: 1; }
-
 .reset-btn {
   background: white;
   border: 2px solid var(--ink);
@@ -565,9 +414,10 @@ section {
   cursor: pointer;
   box-shadow: 3px 3px 0 var(--ink);
   margin-top: 12px;
+  font-family: inherit;
 }
 
-/* ========= TOAST ========= */
+/* ===== TOAST ===== */
 .toast {
   position: fixed;
   left: 50%;
@@ -579,49 +429,47 @@ section {
   border-radius: 14px;
   padding: 12px 18px;
   font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   z-index: 999;
   transition: transform 0.25s;
   max-width: 90vw;
   text-align: center;
 }
-
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ========= FOOTER ========= */
-footer {
-  text-align: center;
+.note-text {
   color: #5d6678;
   font-size: 0.82rem;
-  padding: 24px 0 8px;
+  margin-bottom: 12px;
 }
 </style>
 </head>
 <body>
 
-<header id="top">
+<header>
   <h1>🗺️ 北海道地方図鑑</h1>
   <p class="sub">及川家遠征隊 2026 冒険記録</p>
   <span class="date-badge">📅 2026.08.23（日）〜 08.25（火）</span>
 </header>
 
 <nav>
-  <a href="#top">🏠 表紙</a>
-  <a href="#home">ホーム</a>
-  <a href="#schedule">📅 旅程</a>
-  <a href="#trainers">👨‍👩‍👧‍👦 図鑑</a>
-  <a href="#creatures">🐾 生物</a>
-  <a href="#badges">🏅 バッジ</a>
+  <button onclick="showPage('home')" class="active" id="nav-home">🏠 ホーム</button>
+  <button onclick="showPage('schedule')" id="nav-schedule">📅 旅程</button>
+  <button onclick="showPage('trainers')" id="nav-trainers">👨‍👩‍👧‍👦 トレーナー</button>
+  <button onclick="showPage('creatures')" id="nav-creatures">🐾 生物</button>
+  <button onclick="showPage('badges')" id="nav-badges">🏅 バッジ</button>
 </nav>
 
 <div class="app">
 
-  <!-- 表紙 -->
-  <section>
-    <div class="book">
-      <span class="ribbon">📖 DS攻略本風 / v1</span>
-      <h2>及川家遠征隊、<br>北海道地方へ！</h2>
-      <p>旅行前は攻略本、旅行中は冒険ノート、旅行後は思い出アルバムへ進化するアプリです。</p>
+  <!-- ホーム -->
+  <div class="page active" id="page-home">
+    <section>
+      <div class="sec-head">
+        <span class="sec-label">HOME</span>
+        <h2>ホーム</h2>
+      </div>
+
       <div class="map-box">
         <div class="hokkaido-shape"></div>
         <div class="pins">
@@ -631,312 +479,285 @@ footer {
           <span class="pin">🐧 AOAO</span>
           <span class="pin">🍫 ロイズ</span>
         </div>
-        <div class="btn-row">
-          <a class="btn" href="#home">▶ 冒険をはじめる</a>
-          <a class="btn green" href="#badges">🏅 バッジを見る</a>
+      </div>
+
+      <div class="speech-box">
+        <div class="mascot-icon">🤍</div>
+        <div>
+          <b>シマエナガ（マスコット）</b>
+          <p>おかえり！ここは及川家遠征隊の北海道地方図鑑だよ。まずは旅程とバッジケースを確認しよう！</p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ホーム -->
-  <section id="home">
-    <div class="sec-head">
-      <span class="sec-label">HOME</span>
-      <h2>ホーム</h2>
-    </div>
-    <div class="speech-box">
-      <div class="mascot-icon">🤍</div>
-      <div>
-        <b>シマエナガ（マスコット）</b>
-        <p>おかえり！ここは及川家遠征隊の北海道地方図鑑だよ。まずは旅程とバッジケースを確認しよう！</p>
+      <div class="tile-grid">
+        <div class="tile" onclick="showPage('schedule')">
+          <b>📅 旅程表</b>
+          <small>3日間のスケジュール</small>
+          <span class="tile-btn">▶ 冒険をはじめる</span>
+        </div>
+        <div class="tile" onclick="showPage('trainers')">
+          <b>👨‍👩‍👧‍👦 トレーナー</b>
+          <small>遠征隊メンバー4人</small>
+        </div>
+        <div class="tile" onclick="showPage('creatures')">
+          <b>🐾 北海道生物図鑑</b>
+          <small>No.101〜110</small>
+        </div>
+        <div class="tile" onclick="showPage('badges')">
+          <b>🏅 バッジケース</b>
+          <small>8個コンプを目指せ！</small>
+        </div>
       </div>
-    </div>
-    <div class="tile-grid">
-      <a class="tile" href="#schedule">
-        <b>📅 旅程表</b>
-        <small>3日間のスケジュール</small>
-      </a>
-      <a class="tile" href="#trainers">
-        <b>👨‍👩‍👧‍👦 トレーナー図鑑</b>
-        <small>遠征隊メンバー4人</small>
-      </a>
-      <a class="tile" href="#creatures">
-        <b>🐾 北海道生物図鑑</b>
-        <small>No.101〜110</small>
-      </a>
-      <a class="tile" href="#badges">
-        <b>🏅 バッジケース</b>
-        <small>8個コンプを目指せ！</small>
-      </a>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- 旅程 -->
-  <section id="schedule">
-    <div class="sec-head">
-      <span class="sec-label">SCHEDULE</span>
-      <h2>旅程表</h2>
-    </div>
+  <div class="page" id="page-schedule">
+    <section>
+      <div class="sec-head">
+        <span class="sec-label">SCHEDULE</span>
+        <h2>旅程表</h2>
+      </div>
 
-    <div class="schedule-day">
-      <div class="day-header">🗓️ DAY 1 ── 2026年8月23日（日）出発の日</div>
-      <div class="schedule-items">
-        <div class="schedule-item">
-          <div class="s-time">午前</div>
-          <div class="s-content">
-            <b>✈️ 茨城空港 → 新千歳空港</b>
-            <small>いよいよ出発！そらのバッジ獲得チャンス</small>
+      <div class="schedule-day">
+        <div class="day-header">🗓️ DAY 1 ── 2026年8月23日（日）出発の日</div>
+        <div class="schedule-items">
+          <div class="schedule-item">
+            <div class="s-time">午前</div>
+            <div class="s-content"><b>✈️ 茨城空港 → 新千歳空港</b><small>いよいよ出発！そらのバッジ獲得チャンス</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">昼</div>
-          <div class="s-content">
-            <b>🚗 レンタカー受け取り</b>
-            <small>フリードハイブリッド。どうろのバッジ獲得チャンス</small>
+          <div class="schedule-item">
+            <div class="s-time">昼</div>
+            <div class="s-content"><b>🚗 レンタカー受け取り</b><small>フリードハイブリッド。どうろのバッジ獲得チャンス</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">午後</div>
-          <div class="s-content">
-            <b>🏰 ガトーキングダム攻略</b>
-            <small>プールで遊ぶ。みずのバッジ獲得チャンス</small>
+          <div class="schedule-item">
+            <div class="s-time">午後</div>
+            <div class="s-content"><b>🏰 ガトーキングダム攻略</b><small>プールで遊ぶ。みずのバッジ獲得チャンス</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">夜</div>
-          <div class="s-content">
-            <b>🏨 ホテルチェックイン・休息</b>
-            <small>やすらぎのバッジ獲得チャンス</small>
+          <div class="schedule-item">
+            <div class="s-time">夜</div>
+            <div class="s-content"><b>🏨 ホテルチェックイン・休息</b><small>やすらぎのバッジ獲得チャンス</small></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="schedule-day">
-      <div class="day-header">🗓️ DAY 2 ── 2026年8月24日（月）探索の日</div>
-      <div class="schedule-items">
-        <div class="schedule-item">
-          <div class="s-time">午前</div>
-          <div class="s-content">
-            <b>🐧 AOAO SAPPORO攻略</b>
-            <small>都市型水族館。かいようバッジ獲得チャンス</small>
+      <div class="schedule-day">
+        <div class="day-header">🗓️ DAY 2 ── 2026年8月24日（月）探索の日</div>
+        <div class="schedule-items">
+          <div class="schedule-item">
+            <div class="s-time">午前</div>
+            <div class="s-content"><b>🐧 AOAO SAPPORO攻略</b><small>都市型水族館。かいようバッジ獲得チャンス</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">昼</div>
-          <div class="s-content">
-            <b>🍜 北海道グルメを楽しむ</b>
-            <small>しょくどうのバッジ獲得チャンス</small>
+          <div class="schedule-item">
+            <div class="s-time">昼</div>
+            <div class="s-content"><b>🍜 北海道グルメを楽しむ</b><small>しょくどうのバッジ獲得チャンス</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">午後</div>
-          <div class="s-content">
-            <b>🍫 ロイズ チョコレートワールド</b>
-            <small>スイーツバッジ獲得チャンス</small>
+          <div class="schedule-item">
+            <div class="s-time">午後</div>
+            <div class="s-content"><b>🍫 ロイズ チョコレートワールド</b><small>スイーツバッジ獲得チャンス</small></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="schedule-day">
-      <div class="day-header">🗓️ DAY 3 ── 2026年8月25日（火）帰還の日</div>
-      <div class="schedule-items">
-        <div class="schedule-item">
-          <div class="s-time">午前</div>
-          <div class="s-content">
-            <b>🛍️ おみやげ・空港へ</b>
-            <small>最後の北海道を楽しもう</small>
+      <div class="schedule-day">
+        <div class="day-header">🗓️ DAY 3 ── 2026年8月25日（火）帰還の日</div>
+        <div class="schedule-items">
+          <div class="schedule-item">
+            <div class="s-time">午前</div>
+            <div class="s-content"><b>🛍️ おみやげ・空港へ</b><small>最後の北海道を楽しもう</small></div>
           </div>
-        </div>
-        <div class="schedule-item">
-          <div class="s-time">午後</div>
-          <div class="s-content">
-            <b>✈️ 新千歳空港 → 茨城空港</b>
-            <small>無事帰還！チャンピオンリボン獲得</small>
+          <div class="schedule-item">
+            <div class="s-time">午後</div>
+            <div class="s-content"><b>✈️ 新千歳空港 → 茨城空港</b><small>無事帰還！チャンピオンリボン獲得</small></div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <!-- トレーナー図鑑 -->
-  <section id="trainers">
-    <div class="sec-head">
-      <span class="sec-label">TRAINER DEX</span>
-      <h2>トレーナー図鑑</h2>
-    </div>
-    <p style="color:#5d6678;font-size:.85rem;margin-bottom:14px;">※ 次のバージョンでイラスト・ドット絵を追加します</p>
-    <div class="trainer-grid">
-      <div class="trainer-card">
-        <span class="dex-no">No.001</span>
-        <div class="img-placeholder">👨</div>
-        <h3>貴也</h3>
-        <span class="lv-badge">Lv.34</span>
-        <p class="role">ナビゲータ</p>
-        <p class="type">タイプ：ノーマル / はがね</p>
-        <p class="type">特性：けいかくせい</p>
-        <p class="note">レンタカー運転と旅程管理を担当する遠征隊のリーダー。</p>
+  <!-- トレーナー -->
+  <div class="page" id="page-trainers">
+    <section>
+      <div class="sec-head">
+        <span class="sec-label">TRAINER DEX</span>
+        <h2>トレーナー</h2>
       </div>
-      <div class="trainer-card">
-        <span class="dex-no">No.002</span>
-        <div class="img-placeholder">👩</div>
-        <h3>真奈</h3>
-        <span class="lv-badge">Lv.32</span>
-        <p class="role">サポーター</p>
-        <p class="type">タイプ：フェアリー / くさ</p>
-        <p class="type">特性：こそだてじょうず</p>
-        <p class="note">体調管理と子どもたちの安心を支える遠征隊の要。</p>
+      <p class="note-text">※ 次のバージョンでイラスト・ドット絵を追加します</p>
+      <div class="trainer-grid">
+        <div class="trainer-card">
+          <span class="dex-no">No.001</span>
+          <div class="img-placeholder">👨</div>
+          <h3>貴也</h3>
+          <span class="lv-badge">Lv.34</span>
+          <p class="role">ナビゲータ</p>
+          <p class="type">タイプ：ノーマル / はがね</p>
+          <p class="type">特性：けいかくせい</p>
+          <p class="note">レンタカー運転と旅程管理を担当する遠征隊のリーダー。</p>
+        </div>
+        <div class="trainer-card">
+          <span class="dex-no">No.002</span>
+          <div class="img-placeholder">👩</div>
+          <h3>真奈</h3>
+          <span class="lv-badge">Lv.32</span>
+          <p class="role">サポーター</p>
+          <p class="type">タイプ：フェアリー / くさ</p>
+          <p class="type">特性：こそだてじょうず</p>
+          <p class="note">体調管理と子どもたちの安心を支える遠征隊の要。</p>
+        </div>
+        <div class="trainer-card">
+          <span class="dex-no">No.003</span>
+          <div class="img-placeholder">👧</div>
+          <h3>瑚遥</h3>
+          <span class="lv-badge">Lv.2</span>
+          <p class="role">たんけんか</p>
+          <p class="type">タイプ：ノーマル</p>
+          <p class="type">わざ：だっこ！ / たんけん！</p>
+          <p class="note">新しいものを見つける天才。冒険のテンション担当。</p>
+        </div>
+        <div class="trainer-card">
+          <span class="dex-no">No.004</span>
+          <div class="img-placeholder">👶</div>
+          <h3>智也</h3>
+          <span class="lv-badge">Lv.1</span>
+          <p class="role">いやしけい</p>
+          <p class="type">タイプ：ノーマル</p>
+          <p class="type">わざ：えがお / おひるね</p>
+          <p class="note">笑顔とお昼寝で遠征隊を回復させる癒し担当。</p>
+        </div>
       </div>
-      <div class="trainer-card">
-        <span class="dex-no">No.003</span>
-        <div class="img-placeholder">👧</div>
-        <h3>瑚遥</h3>
-        <span class="lv-badge">Lv.2</span>
-        <p class="role">たんけんか</p>
-        <p class="type">タイプ：ノーマル</p>
-        <p class="type">わざ：だっこ！ / たんけん！</p>
-        <p class="note">新しいものを見つける天才。冒険のテンション担当。</p>
-      </div>
-      <div class="trainer-card">
-        <span class="dex-no">No.004</span>
-        <div class="img-placeholder">👶</div>
-        <h3>智也</h3>
-        <span class="lv-badge">Lv.1</span>
-        <p class="role">いやしけい</p>
-        <p class="type">タイプ：ノーマル</p>
-        <p class="type">わざ：えがお / おひるね</p>
-        <p class="note">笑顔とお昼寝で遠征隊を回復させる癒し担当。</p>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- 生物図鑑 -->
-  <section id="creatures">
-    <div class="sec-head">
-      <span class="sec-label">CREATURE DEX</span>
-      <h2>北海道生物図鑑</h2>
-    </div>
-    <p style="color:#5d6678;font-size:.85rem;margin-bottom:14px;">※ 次のバージョンでドット絵を追加します</p>
-    <div class="creature-grid">
-      <div class="creature-card">
-        <div class="img-placeholder">🦌</div>
-        <span class="dex-no">No.101</span>
-        <h3>エゾシカ</h3>
-        <p class="cat">しんりんのまもりびと</p>
-        <p class="loc">出現：森・道中</p>
+  <div class="page" id="page-creatures">
+    <section>
+      <div class="sec-head">
+        <span class="sec-label">CREATURE DEX</span>
+        <h2>北海道生物図鑑</h2>
       </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🐿️</div>
-        <span class="dex-no">No.102</span>
-        <h3>エゾモモンガ</h3>
-        <p class="cat">よぞらのグライダー</p>
-        <p class="loc">出現：夜・森</p>
+      <p class="note-text">※ 次のバージョンでドット絵を追加します</p>
+      <div class="creature-grid">
+        <div class="creature-card">
+          <div class="img-placeholder">🦌</div>
+          <span class="dex-no">No.101</span>
+          <h3>エゾシカ</h3>
+          <p class="cat">しんりんのまもりびと</p>
+          <p class="loc">出現：森・道中</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🐿️</div>
+          <span class="dex-no">No.102</span>
+          <h3>エゾモモンガ</h3>
+          <p class="cat">よぞらのグライダー</p>
+          <p class="loc">出現：夜・森</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🦅</div>
+          <span class="dex-no">No.103</span>
+          <h3>オオワシ</h3>
+          <p class="cat">そらのかんさつしゃ</p>
+          <p class="loc">出現：空港・上空</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🦊</div>
+          <span class="dex-no">No.104</span>
+          <h3>キタキツネ</h3>
+          <p class="cat">みちあんない</p>
+          <p class="loc">出現：道・街</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🌊</div>
+          <span class="dex-no">No.105</span>
+          <h3>クリオネ</h3>
+          <p class="cat">ひかりのようせい</p>
+          <p class="loc">出現：海・光</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🦭</div>
+          <span class="dex-no">No.106</span>
+          <h3>ゴマフアザラシ</h3>
+          <p class="cat">おひるねマスター</p>
+          <p class="loc">出現：水・休憩</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🐋</div>
+          <span class="dex-no">No.107</span>
+          <h3>ザトウクジラ</h3>
+          <p class="cat">うみのきょじん</p>
+          <p class="loc">出現：海</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🤍</div>
+          <span class="dex-no">No.108</span>
+          <h3>シマエナガ</h3>
+          <p class="cat">ゆきのてんし</p>
+          <p class="loc">出現：ホーム</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🐻</div>
+          <span class="dex-no">No.109</span>
+          <h3>ヒグマ</h3>
+          <p class="cat">しんりんのおう</p>
+          <p class="loc">出現：森・山</p>
+        </div>
+        <div class="creature-card">
+          <div class="img-placeholder">🐦</div>
+          <span class="dex-no">No.110</span>
+          <h3>タンチョウ</h3>
+          <p class="cat">そうげんのまいびと</p>
+          <p class="loc">出現：湿原・草原</p>
+        </div>
       </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🦅</div>
-        <span class="dex-no">No.103</span>
-        <h3>オオワシ</h3>
-        <p class="cat">そらのかんさつしゃ</p>
-        <p class="loc">出現：空港・上空</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🦊</div>
-        <span class="dex-no">No.104</span>
-        <h3>キタキツネ</h3>
-        <p class="cat">みちあんない</p>
-        <p class="loc">出現：道・街</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🌊</div>
-        <span class="dex-no">No.105</span>
-        <h3>クリオネ</h3>
-        <p class="cat">ひかりのようせい</p>
-        <p class="loc">出現：海・光</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🦭</div>
-        <span class="dex-no">No.106</span>
-        <h3>ゴマフアザラシ</h3>
-        <p class="cat">おひるねマスター</p>
-        <p class="loc">出現：水・休憩</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🐋</div>
-        <span class="dex-no">No.107</span>
-        <h3>ザトウクジラ</h3>
-        <p class="cat">うみのきょじん</p>
-        <p class="loc">出現：海</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🤍</div>
-        <span class="dex-no">No.108</span>
-        <h3>シマエナガ</h3>
-        <p class="cat">ゆきのてんし</p>
-        <p class="loc">出現：ホーム</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🐻</div>
-        <span class="dex-no">No.109</span>
-        <h3>ヒグマ</h3>
-        <p class="cat">しんりんのおう</p>
-        <p class="loc">出現：森・山</p>
-      </div>
-      <div class="creature-card">
-        <div class="img-placeholder">🐦</div>
-        <span class="dex-no">No.110</span>
-        <h3>タンチョウ</h3>
-        <p class="cat">そうげんのまいびと</p>
-        <p class="loc">出現：湿原・草原</p>
-      </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <!-- バッジケース -->
-  <section id="badges">
-    <div class="sec-head">
-      <span class="sec-label">BADGE CASE</span>
-      <h2>バッジケース</h2>
-    </div>
-    <p style="color:#5d6678;font-size:.85rem;margin-bottom:12px;">タップしてバッジを獲得！進捗はこの端末に保存されます。</p>
-
-    <div class="progress-box">
-      <div class="prog-row">
-        <span>🏅 バッジ獲得数</span>
-        <span id="prog-count">0 / 8</span>
+  <!-- バッジ -->
+  <div class="page" id="page-badges">
+    <section>
+      <div class="sec-head">
+        <span class="sec-label">BADGE CASE</span>
+        <h2>バッジケース</h2>
       </div>
-      <div class="prog-bar"><div id="prog-fill"></div></div>
-    </div>
-
-    <div class="badge-grid" id="badge-grid"></div>
-
-    <button class="reset-btn" onclick="resetBadges()">🔄 進捗をリセット</button>
-  </section>
-
-  <footer>
-    <p>及川家遠征隊 北海道地方図鑑 v1.0</p>
-    <p style="margin-top:4px;">次バージョン：画像追加 → PWA化 → 冒険ログ</p>
-  </footer>
+      <p class="note-text">タップしてバッジを獲得！進捗はこの端末に保存されます。</p>
+      <div class="progress-box">
+        <div class="prog-row">
+          <span>🏅 バッジ獲得数</span>
+          <span id="prog-count">0 / 8</span>
+        </div>
+        <div class="prog-bar"><div id="prog-fill"></div></div>
+      </div>
+      <div class="badge-grid" id="badge-grid"></div>
+      <button class="reset-btn" onclick="resetBadges()">🔄 進捗をリセット</button>
+    </section>
+  </div>
 
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+// ===== ページ切替 =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== バッジ =====
 const BADGES = [
-  { id:"b1", icon:"☁️", name:"そらのバッジ",    motif:"ラベンダー",   desc:"茨城空港から飛び立つ" },
-  { id:"b2", icon:"🌸", name:"とうちゃくバッジ", motif:"ハマナス",     desc:"新千歳空港に上陸" },
-  { id:"b3", icon:"🚗", name:"どうろのバッジ",   motif:"黒曜石",      desc:"レンタカーを入手" },
-  { id:"b4", icon:"💧", name:"みずのバッジ",     motif:"氷晶",        desc:"ガトキンプール攻略" },
-  { id:"b5", icon:"🌿", name:"やすらぎのバッジ", motif:"白樺",        desc:"ホテルでしっかり休む" },
-  { id:"b6", icon:"🌊", name:"かいようバッジ",   motif:"流氷",        desc:"AOAO SAPPORO攻略" },
-  { id:"b7", icon:"🍜", name:"しょくどうのバッジ",motif:"夕張メロン", desc:"北海道グルメを楽しむ" },
-  { id:"b8", icon:"🍫", name:"スイーツバッジ",   motif:"雪結晶×カカオ",desc:"ロイズ訪問" },
+  { id:"b1", icon:"☁️", name:"そらのバッジ",     desc:"茨城空港から飛び立つ" },
+  { id:"b2", icon:"🌸", name:"とうちゃくバッジ",  desc:"新千歳空港に上陸" },
+  { id:"b3", icon:"🚗", name:"どうろのバッジ",    desc:"レンタカーを入手" },
+  { id:"b4", icon:"💧", name:"みずのバッジ",      desc:"ガトキンプール攻略" },
+  { id:"b5", icon:"🌿", name:"やすらぎのバッジ",  desc:"ホテルでしっかり休む" },
+  { id:"b6", icon:"🌊", name:"かいようバッジ",    desc:"AOAO SAPPORO攻略" },
+  { id:"b7", icon:"🍜", name:"しょくどうのバッジ",desc:"北海道グルメを楽しむ" },
+  { id:"b8", icon:"🍫", name:"スイーツバッジ",    desc:"ロイズ訪問" },
 ];
 
 const grid = document.getElementById("badge-grid");
-
 BADGES.forEach(b => {
   const el = document.createElement("div");
   el.className = "badge-item";
@@ -968,18 +789,14 @@ function updateProgress() {
 
 function saveBadges() {
   const data = {};
-  BADGES.forEach(b => {
-    data[b.id] = document.getElementById("badge-" + b.id).classList.contains("earned");
-  });
+  BADGES.forEach(b => { data[b.id] = document.getElementById("badge-" + b.id).classList.contains("earned"); });
   localStorage.setItem("oikawa_hokkaido_v1_badges", JSON.stringify(data));
   updateProgress();
 }
 
 function loadBadges() {
   const data = JSON.parse(localStorage.getItem("oikawa_hokkaido_v1_badges") || "{}");
-  BADGES.forEach(b => {
-    if (data[b.id]) document.getElementById("badge-" + b.id).classList.add("earned");
-  });
+  BADGES.forEach(b => { if (data[b.id]) document.getElementById("badge-" + b.id).classList.add("earned"); });
   updateProgress();
 }
 
@@ -997,7 +814,7 @@ function showToast(msg) {
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
 }
 
 window.addEventListener("DOMContentLoaded", loadBadges);
