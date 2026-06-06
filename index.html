@@ -493,10 +493,10 @@ const BADGES = [
   { id:"b8", name:"スイーツバッジ",   desc:"ロイズ訪問",           col:3, row:1 },
 ];
 
-// タイトル行の高さ割合（目視調整）
-const TITLE_PCT = 19.53;
+// タイトル行の高さ割合（画像ピクセル計測値）
+const TITLE_PCT = 20.18;  // 上段バッジ上端 (155/768*100)
 const CELL_W = 25.0;
-const CELL_H = 40.23;
+const CELL_H = 39.06;     // 行ピッチ＝下段上端-上段上端 (455-155)/768*100
 
 function getBadgeRect(b) {
   const x = b.col * CELL_W;
@@ -552,12 +552,12 @@ function updateColorImages() {
     // px換算で考える（親=画像全体を100×100とする座標系）
     // imgWidth  = 親幅全体 → wrapperW基準: 100/r.w*100 %
     // imgHeight = 親高さ全体 → wrapperH基準: 100/r.h*100 %
-    // imgLeft   = -r.x (親幅基準px) → wrapperW基準: -r.x/r.w*100 %
-    // imgTop    = -r.y (親高さ基準px) → wrapperH基準: -r.y/r.h*100 %
-    const imgWidthPct  = (100 / r.w) * 100;    // wrapperW基準 %
-    const imgHeightPct = (100 / r.h) * 100;    // wrapperH基準 %
-    const leftPct      = -(r.x / r.w) * 100;   // wrapperW基準 %
-    const topPct       = -(r.y / r.h) * 100;   // wrapperH基準 %
+    // imgLeft   = -r.x (親幅基準) → wrapperW基準: -r.x/r.w*100 %
+    // imgTop    = -r.y (親高さ基準) → wrapperH基準: -r.y/r.h*100 %
+    const imgWidthPct  = (100 / r.w) * 100;
+    const imgHeightPct = (100 / r.h) * 100;
+    const leftPct      = -(r.x / r.w) * 100;
+    const topPct       = -(r.y / r.h) * 100;
 
     const img = document.createElement("img");
     img.src = document.getElementById("badge-img-after").src;
