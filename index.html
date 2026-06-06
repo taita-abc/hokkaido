@@ -553,12 +553,18 @@ function updateColorImages() {
     `;
     const img = document.createElement("img");
     img.src = document.getElementById("badge-img-after").src;
+    // imgの幅はラッパー幅の (1/r.w*100) 倍 → 例: r.w=25% なら imgWidth=400%
+    // 画像アスペクト比 768/1389 より imgHeight(ラッパー幅基準%) = imgWidth × (768/1389)
+    // ラッパー高さ基準での imgHeight% = imgWidth × (768/1389) / r.h × 100
+    const imgWidthPct = 100 / r.w * 100;
+    const imgHeightInWrapperPct = imgWidthPct * (768 / 1389) / r.h * 100;
+    const topPct = -(r.y / r.h) * imgHeightInWrapperPct;
     img.style.cssText = `
       position:absolute;
-      width:${100/r.w*100}%;
+      width:${imgWidthPct}%;
       height:auto;
-      left:${-r.x/r.w*100}%;
-      top:${-r.y/r.h*100}%;
+      left:${-r.x / r.w * 100}%;
+      top:${topPct}%;
     `;
     wrapper.appendChild(img);
     caseEl.appendChild(wrapper);
@@ -590,7 +596,7 @@ function loadBadges() {
 }
 function resetBadges() {
   if (!confirm("バッジ進捗をリセットしますか？")) return;
-  BADGES.forEach(b => earned[b.id] = false);
+  BADGES.forEach(b => { earned[b.id] = false; });
   localStorage.removeItem("oikawa_hokkaido_v1_badges");
   updateColorImages();
   updateProgress();
