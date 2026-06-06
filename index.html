@@ -535,15 +535,12 @@ function updateClipPath() {
 
 // カラー画像を分割して各バッジに表示する方式
 function updateColorImages() {
-  // 既存のcolor-badgeを削除
   caseEl.querySelectorAll(".color-badge").forEach(el => el.remove());
-  const baseImg = document.getElementById("badge-img-before");
-  const W = baseImg.offsetWidth || baseImg.naturalWidth;
-  const H = baseImg.offsetHeight || (W * 768 / 1389);
 
   BADGES.forEach(b => {
     if (!earned[b.id]) return;
     const r = getBadgeRect(b);
+
     const wrapper = document.createElement("div");
     wrapper.className = "color-badge";
     wrapper.style.cssText = `
@@ -551,21 +548,27 @@ function updateColorImages() {
       left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%;
       overflow:hidden;pointer-events:none;
     `;
+
+    // px換算で考える（親=画像全体を100×100とする座標系）
+    // imgWidth  = 親幅全体 → wrapperW基準: 100/r.w*100 %
+    // imgHeight = 親高さ全体 → wrapperH基準: 100/r.h*100 %
+    // imgLeft   = -r.x (親幅基準px) → wrapperW基準: -r.x/r.w*100 %
+    // imgTop    = -r.y (親高さ基準px) → wrapperH基準: -r.y/r.h*100 %
+    const imgWidthPct  = (100 / r.w) * 100;    // wrapperW基準 %
+    const imgHeightPct = (100 / r.h) * 100;    // wrapperH基準 %
+    const leftPct      = -(r.x / r.w) * 100;   // wrapperW基準 %
+    const topPct       = -(r.y / r.h) * 100;   // wrapperH基準 %
+
     const img = document.createElement("img");
     img.src = document.getElementById("badge-img-after").src;
-    // imgの幅はラッパー幅の (1/r.w*100) 倍 → 例: r.w=25% なら imgWidth=400%
-    // 画像アスペクト比 768/1389 より imgHeight(ラッパー幅基準%) = imgWidth × (768/1389)
-    // ラッパー高さ基準での imgHeight% = imgWidth × (768/1389) / r.h × 100
-    const imgWidthPct = 100 / r.w * 100;
-    const imgHeightInWrapperPct = imgWidthPct * (768 / 1389) / r.h * 100;
-    const topPct = -(r.y / r.h) * imgHeightInWrapperPct;
     img.style.cssText = `
       position:absolute;
       width:${imgWidthPct}%;
-      height:auto;
-      left:${-r.x / r.w * 100}%;
+      height:${imgHeightPct}%;
+      left:${leftPct}%;
       top:${topPct}%;
     `;
+
     wrapper.appendChild(img);
     caseEl.appendChild(wrapper);
   });
@@ -596,7 +599,7 @@ function loadBadges() {
 }
 function resetBadges() {
   if (!confirm("バッジ進捗をリセットしますか？")) return;
-  BADGES.forEach(b => { earned[b.id] = false; });
+  BADGES.forEach(b => earned[b.id] = false);
   localStorage.removeItem("oikawa_hokkaido_v1_badges");
   updateColorImages();
   updateProgress();
