@@ -494,14 +494,10 @@ const BADGES = [
 ];
 
 // 画像ピクセル計測値（1389x768px）
-// TITLE_PCT   : 上段バッジ上端 155px/768
-// CELL_H      : 行ピッチ (455-155)px/768  ← タップ領域用
-// BADGE_CLIP_H: バッジ実体の高さのみ（ラベル・ギャップ除く）
-//   row=0: (382-155)/768  row=1: (705-455)/768
-const TITLE_PCT    = 20.18;
+const TITLE_PCT    = 20.18;  // 上段バッジ上端 155px/768
 const CELL_W       = 25.0;
-const CELL_H       = 39.06;
-const BADGE_CLIP_H = [29.56, 32.55];
+const CELL_H       = 39.06;  // 行ピッチ (455-155)px/768
+const BADGE_CLIP_H = [29.56, 32.55]; // バッジ実体の高さ row=0,1
 
 function getBadgeRect(b) {
   const x = b.col * CELL_W;
@@ -528,41 +524,37 @@ function updateClipPath() {
   updateColorImages();
 }
 
-// カラー画像を分割して各バッジに表示する方式
+// background-imageでバッジを表示（はみ出し問題を根本解決）
+// background-positionの%は特殊計算式を使用:
+//   X% = r.x * 100 / (100 - r.w)
+//   Y% = r.y * 100 / (100 - clipH)
 function updateColorImages() {
   caseEl.querySelectorAll(".color-badge").forEach(el => el.remove());
+
+  const imgSrc = document.getElementById("badge-img-after").src;
 
   BADGES.forEach(b => {
     if (!earned[b.id]) return;
     const r = getBadgeRect(b);
     const clipH = BADGE_CLIP_H[b.row];
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "color-badge";
-    // clip-path:inset(0) で絶対配置の子要素も確実にクリップする
-    wrapper.style.cssText = `
+    const bgX = (r.x * 100 / (100 - r.w)).toFixed(4);
+    const bgY = (r.y * 100 / (100 - clipH)).toFixed(4);
+    const bgSize = ((100 / r.w) * 100).toFixed(2);
+
+    const div = document.createElement("div");
+    div.className = "color-badge";
+    div.style.cssText = `
       position:absolute;
       left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${clipH}%;
-      overflow:hidden;clip-path:inset(0);pointer-events:none;
+      background-image:url("${imgSrc}");
+      background-size:${bgSize}% auto;
+      background-position:${bgX}% ${bgY}%;
+      background-repeat:no-repeat;
+      pointer-events:none;
     `;
 
-    // imgをcaseEl全体として配置し、wrapperのclipで必要な部分だけ見せる
-    // imgW: wrapperW基準 = (100/r.w)*100%
-    // imgH: wrapperH(clipH)基準 = (100/clipH)*100%
-    // left: -(r.x/r.w)*100%
-    // top : -(r.y/clipH)*100%
-    const img = document.createElement("img");
-    img.src = document.getElementById("badge-img-after").src;
-    img.style.cssText = `
-      position:absolute;
-      width:${(100/r.w)*100}%;
-      height:${(100/clipH)*100}%;
-      left:${-(r.x/r.w)*100}%;
-      top:${-(r.y/clipH)*100}%;
-    `;
-
-    wrapper.appendChild(img);
-    caseEl.appendChild(wrapper);
+    caseEl.appendChild(div);
   });
 }
 
