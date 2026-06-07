@@ -482,8 +482,6 @@ function showTrainer(id) {
 }
 
 // バッジ定義（位置は画像に対する%）
-// clip_h: カラー画像のクリップ高さ（バッジ実体の高さのみ、ラベル・ギャップは含まない）
-const BADGE_CLIP_H = [29.95, 32.55]; // row=0, row=1 のクリップ高さ%
 const BADGES = [
   { id:"b1", name:"そらのバッジ",     desc:"茨城空港から飛び立つ", col:0, row:0 },
   { id:"b2", name:"とうちゃくバッジ", desc:"新千歳空港に上陸",     col:1, row:0 },
@@ -495,10 +493,15 @@ const BADGES = [
   { id:"b8", name:"スイーツバッジ",   desc:"ロイズ訪問",           col:3, row:1 },
 ];
 
-// タイトル行の高さ割合（目視調整）
-const TITLE_PCT = 20.18;  // 上段バッジ上端 (155px/768px)
-const CELL_W = 25.0;
-const CELL_H = 39.06;     // 行ピッチ: (455-155)px/768px
+// 画像ピクセル計測値（1389x768px）
+// TITLE_PCT : 上段バッジ上端 155px/768
+// CELL_H    : 行ピッチ (455-155)px/768
+// BADGE_CLIP_H: バッジ実体の高さのみ（ラベル・ギャップ除く）
+//   row=0: (382-155)/768  row=1: (705-455)/768
+const TITLE_PCT    = 20.18;
+const CELL_W       = 25.0;
+const CELL_H       = 39.06;
+const BADGE_CLIP_H = [29.56, 32.55];
 
 function getBadgeRect(b) {
   const x = b.col * CELL_W;
@@ -542,8 +545,7 @@ function updateColorImages() {
   BADGES.forEach(b => {
     if (!earned[b.id]) return;
     const r = getBadgeRect(b);
-    // wrapperの高さはバッジ実体のみ（ラベル・行間ギャップを含まない）
-    const clipH = BADGE_CLIP_H[b.row];
+    const clipH = BADGE_CLIP_H[b.row]; // バッジ実体の高さのみ（はみ出し防止）
 
     const wrapper = document.createElement("div");
     wrapper.className = "color-badge";
@@ -553,11 +555,11 @@ function updateColorImages() {
       overflow:hidden;pointer-events:none;
     `;
 
-    // px換算（親=画像全体 100×100 の座標系）
-    // imgW = 親幅全体 → wrapperW基準: (100/r.w)*100 %
-    // imgH = 親高さ全体 → wrapperH(clipH)基準: (100/clipH)*100 %
-    // left = -r.x → wrapperW基準: -(r.x/r.w)*100 %
-    // top  = -r.y → wrapperH基準: -(r.y/clipH)*100 %
+    // px換算（親=画像全体を100×100の座標系とみなす）
+    // imgW → wrapperW基準: (100/r.w)*100 %
+    // imgH → wrapperH(clipH)基準: (100/clipH)*100 %
+    // left → -(r.x/r.w)*100 %
+    // top  → -(r.y/clipH)*100 %
     const img = document.createElement("img");
     img.src = document.getElementById("badge-img-after").src;
     img.style.cssText = `
