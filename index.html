@@ -494,8 +494,8 @@ const BADGES = [
 ];
 
 // 画像ピクセル計測値（1389x768px）
-// TITLE_PCT : 上段バッジ上端 155px/768
-// CELL_H    : 行ピッチ (455-155)px/768
+// TITLE_PCT   : 上段バッジ上端 155px/768
+// CELL_H      : 行ピッチ (455-155)px/768  ← タップ領域用
 // BADGE_CLIP_H: バッジ実体の高さのみ（ラベル・ギャップ除く）
 //   row=0: (382-155)/768  row=1: (705-455)/768
 const TITLE_PCT    = 20.18;
@@ -525,16 +525,6 @@ BADGES.forEach(b => {
 });
 
 function updateClipPath() {
-  const polygons = BADGES
-    .filter(b => earned[b.id])
-    .map(b => {
-      const r = getBadgeRect(b);
-      const x1=r.x, y1=r.y, x2=r.x+r.w, y2=r.y+r.h;
-      // SVG clip-pathの代わりにpolygonを並べる（複数領域）
-      return `${x1}% ${y1}%, ${x2}% ${y1}%, ${x2}% ${y2}%, ${x1}% ${y2}%`;
-    });
-  // clip-pathで複数矩形を表現（ただしpolygonは1つしか使えないため
-  // 代わりに獲得済みバッジを個別imgで表示する方式に変更）
   updateColorImages();
 }
 
@@ -545,7 +535,8 @@ function updateColorImages() {
   BADGES.forEach(b => {
     if (!earned[b.id]) return;
     const r = getBadgeRect(b);
-    const clipH = BADGE_CLIP_H[b.row]; // バッジ実体の高さのみ（はみ出し防止）
+    // wrapperの高さはバッジ実体のみ（ラベル・行間ギャップを含まない）
+    const clipH = BADGE_CLIP_H[b.row];
 
     const wrapper = document.createElement("div");
     wrapper.className = "color-badge";
