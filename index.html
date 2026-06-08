@@ -524,33 +524,37 @@ function updateClipPath() {
   updateColorImages();
 }
 
-// background-imageでバッジを表示（はみ出し問題を根本解決）
-// background-positionの%は特殊計算式を使用:
-//   X% = r.x * 100 / (100 - r.w)
-//   Y% = r.y * 100 / (100 - clipH)
+// Canvasでバッジ部分を事前切り抜き → CSSクリッピング不要
 function updateColorImages() {
   caseEl.querySelectorAll(".color-badge").forEach(el => el.remove());
 
-  const imgSrc = document.getElementById("badge-img-after").src;
+  const afterImg = document.getElementById("badge-img-after");
+  const iW = afterImg.naturalWidth;   // 1389
+  const iH = afterImg.naturalHeight;  // 768
 
   BADGES.forEach(b => {
     if (!earned[b.id]) return;
     const r = getBadgeRect(b);
     const clipH = BADGE_CLIP_H[b.row];
 
-    const bgX = (r.x * 100 / (100 - r.w)).toFixed(4);
-    const bgY = (r.y * 100 / (100 - clipH)).toFixed(4);
-    const bgSize = ((100 / r.w) * 100).toFixed(2);
+    // 画像からバッジ部分だけをCanvasで切り抜く
+    const sx = Math.round(r.x   / 100 * iW);
+    const sy = Math.round(r.y   / 100 * iH);
+    const sw = Math.round(r.w   / 100 * iW);
+    const sh = Math.round(clipH / 100 * iH);
+
+    const canvas = document.createElement("canvas");
+    canvas.width  = sw;
+    canvas.height = sh;
+    canvas.getContext("2d").drawImage(afterImg, sx, sy, sw, sh, 0, 0, sw, sh);
 
     const div = document.createElement("div");
     div.className = "color-badge";
     div.style.cssText = `
       position:absolute;
       left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${clipH}%;
-      background-image:url("${imgSrc}");
-      background-size:${bgSize}% auto;
-      background-position:${bgX}% ${bgY}%;
-      background-repeat:no-repeat;
+      background-image:url(${canvas.toDataURL()});
+      background-size:100% 100%;
       pointer-events:none;
     `;
 
