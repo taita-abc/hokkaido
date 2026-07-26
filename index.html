@@ -446,6 +446,31 @@ section{
 .om-qty-btn{background:#2060c8;color:#fff;border:2px solid #222;width:26px;height:26px;font-size:16px;font-family:monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;padding:0;line-height:1;flex-shrink:0}
 .om-qty-btn:active{background:#1a50a8}
 #om-qty-num{font-size:13px;font-family:monospace;color:#222;min-width:28px;text-align:center}
+
+/* ===== 旅程表 ===== */
+.sche-day{margin-bottom:18px}
+.sche-day-hd{display:flex;align-items:center;gap:10px;background:var(--surface-1);border:0.5px solid var(--border-strong);border-radius:12px;padding:10px 14px;margin-bottom:10px}
+.sche-day-badge{background:var(--bg-accent);color:var(--text-accent);font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--radius);white-space:nowrap}
+.sche-day-title{font-size:14px;font-weight:500;color:var(--text-primary)}
+.sche-day-date{font-size:11px;color:var(--text-secondary)}
+.sche-events{padding:0 4px}
+.sche-ev{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.sche-ev:last-child{border-bottom:none}
+.sche-ev-left{display:flex;flex-direction:column;align-items:center;min-width:46px}
+.sche-tbox{background:var(--surface-1);border:0.5px solid var(--border-strong);border-radius:6px;padding:3px 5px;font-size:10px;font-weight:500;color:var(--text-primary);text-align:center;line-height:1.3;font-family:var(--font-mono);white-space:nowrap}
+.sche-conn{width:1.5px;flex:1;background:var(--border);margin:2px auto 0;min-height:10px}
+.sche-ev-body{flex:1;padding-top:2px}
+.sche-must{display:inline-block;background:var(--bg-danger);color:var(--text-danger);font-size:9px;padding:1px 6px;border-radius:3px;margin-bottom:3px;font-weight:500}
+.sche-warn{display:inline-block;background:var(--bg-warning);color:var(--text-warning);font-size:9px;padding:1px 6px;border-radius:3px;margin-bottom:3px;font-weight:500}
+.sche-ev-title{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.4}
+.sche-ev-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;line-height:1.4}
+.sche-toggle{background:none;border:0.5px solid var(--border-strong);border-radius:6px;font-size:10px;color:var(--text-secondary);padding:3px 8px;cursor:pointer;margin-top:5px;font-family:inherit}
+.sche-detail{margin-top:6px;background:var(--surface-1);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--text-secondary);line-height:1.6}
+.sche-detail li{margin-left:12px;margin-bottom:2px}
+.sche-link{display:inline-block;margin-top:4px;font-size:10px;color:var(--text-accent);border:0.5px solid var(--border-accent);border-radius:4px;padding:2px 7px;background:var(--bg-accent)}
+.sche-free-box{background:var(--bg-success);border:0.5px solid var(--border-success);border-radius:8px;padding:8px 10px;margin-top:5px}
+.sche-free-title{font-size:11px;font-weight:500;color:var(--text-success);margin-bottom:4px}
+.sche-free-item{font-size:11px;color:var(--text-secondary);margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -664,28 +689,257 @@ section{
   <div class="page" id="page-schedule">
     <section>
       <div class="sec-head"><span class="sec-label">SCHEDULE</span><h2>旅程表</h2></div>
-      <div class="schedule-day">
-        <div class="day-header">🗓️ DAY 1 ── 2026年8月23日（日）出発の日</div>
-        <div class="schedule-items">
-          <div class="schedule-item"><div class="s-time">午前</div><div class="s-content"><b>✈️ 茨城空港 → 新千歳空港</b><small>いよいよ出発！そらのバッジ獲得チャンス</small></div></div>
-          <div class="schedule-item"><div class="s-time">昼</div><div class="s-content"><b>🚗 レンタカー受け取り</b><small>フリードハイブリッド。どうろのバッジ獲得チャンス</small></div></div>
-          <div class="schedule-item"><div class="s-time">午後</div><div class="s-content"><b>🏰 ガトーキングダム攻略</b><small>プールで遊ぶ。みずのバッジ獲得チャンス</small></div></div>
-          <div class="schedule-item"><div class="s-time">夜</div><div class="s-content"><b>🏨 ホテルチェックイン・休息</b><small>やすらぎのバッジ獲得チャンス</small></div></div>
+      <div class="sche-day">
+        <div class="sche-day-hd">
+          <span class="sche-day-badge">DAY 1</span>
+          <div>
+            <div class="sche-day-title">出発の日</div>
+            <div class="sche-day-date">2026年8月23日（日）</div>
+          </div>
+        </div>
+        <div class="sche-events">
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">08:50<br>発</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">✈️ 茨城空港 出発</div>
+            <div class="sche-ev-sub">SKY0791 ／ 座席 29F・29G</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>子連れ優先搭乗：搭乗口で申し出るとOK</li><li>ベビーカー：SKY無料貸出あり（カウンターで申し出）</li><li>授乳室：2階 SKY ARENA裏手（おむつ替え台あり・ミルク用お湯は電話で依頼）</li><li>機内：粉ミルク用お湯サービスあり</li></ul><br><a class="sche-link" href="https://www.skymark.co.jp/ja/support/assist.html" target="_blank">スカイマーク 子連れサービス</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">10:15<br>着</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🛬 新千歳空港 到着</div>
+            <div class="sche-ev-sub">手荷物受け取り後、外の「許可車乗降所」へ</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>授乳室：2F 銀行ATM付近（個室2室・おむつ台・お湯あり・男性OK）</li><li>ベビーカー：1F到着ロビーで無料レンタルあり</li><li>送迎バス：国内線南側「許可車乗降所」で「ホンダレンタリース北海道」のバスを待つ</li><li>⚠️ 空港内にカウンターなし！必ず外へ出ること</li><li>バスは15分間隔・乗車後約7分で営業所へ</li></ul><br><a class="sche-link" href="https://www.hokkaido-airports.com/ja/new-chitose/service/person-with-child/" target="_blank">新千歳空港 子連れ情報</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">12:00<br>受取</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">🚗 レンタカー 受け取り</div>
+            <div class="sche-ev-sub">ホンダレンタリース北海道 ／ フリードHV・禁煙・CS×2</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>予約番号：101827498</li><li>車種：フリードハイブリッド（禁煙・チャイルドシート×2付き）</li><li>店舗：新千歳空港ラベンダー店（北海道千歳市柏台南2丁目1-6）</li><li>電話：011-241-4500</li></ul><br><a class="sche-link" href="https://www.tabirai.net/car/hokkaido/company/honda_hokkaido/branch/?PID=2620" target="_blank">ホンダレンタリース北海道</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">15:00<br>CI</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">🏨 ガトーキングダム チェックイン</div>
+            <div class="sche-ev-sub">シャトレーゼガトーキングダムサッポロ ／ 夕食・朝食付き</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>住所：北海道札幌市北区東茨戸132番地</li><li>食事：夕食・朝食付き（2泊）</li><li>温泉：天然温泉「妖精の湯」あり（子連れ優先洗い場・滑りにくいタイル）</li><li>⚠️ おむつ使用中の子の大浴場入浴は事前に電話確認推奨</li><li>電話：011-773-2211</li></ul><br><a class="sche-link" href="https://sapporo.gateauxkingdom.com/" target="_blank">ガトーキングダム公式</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">夜</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">♨️ 温泉 ＆ 夕食</div>
+            <div class="sche-ev-sub">夕食はホテルレストランで（付き）</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>パパ・ママ交代制で温泉を楽しむのがおすすめ</li><li>夕食後、子どもは部屋でゆっくり休もう</li></ul></div>
+          </div>
+        </div>
         </div>
       </div>
-      <div class="schedule-day">
-        <div class="day-header">🗓️ DAY 2 ── 2026年8月24日（月）探索の日</div>
-        <div class="schedule-items">
-          <div class="schedule-item"><div class="s-time">午前</div><div class="s-content"><b>🐧 AOAO SAPPORO攻略</b><small>都市型水族館。かいようバッジ獲得チャンス</small></div></div>
-          <div class="schedule-item"><div class="s-time">昼</div><div class="s-content"><b>🍜 北海道グルメを楽しむ</b><small>しょくどうのバッジ獲得チャンス</small></div></div>
-          <div class="schedule-item"><div class="s-time">午後</div><div class="s-content"><b>🍫 ロイズ チョコレートワールド</b><small>スイーツバッジ獲得チャンス</small></div></div>
+      <div class="sche-day">
+        <div class="sche-day-hd">
+          <span class="sche-day-badge">DAY 2</span>
+          <div>
+            <div class="sche-day-title">探索の日</div>
+            <div class="sche-day-date">2026年8月24日（月）</div>
+          </div>
+        </div>
+        <div class="sche-events">
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">朝</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🍳 ホテル朝食</div>
+            <div class="sche-ev-sub">ガトーキングダム ／ 朝食付きプラン</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">10:00<br>開館</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🐧 AOAO SAPPORO</div>
+            <div class="sche-ev-sub">moyuk SAPPORO 4〜6F ／ 大通駅徒歩3分</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>料金：大人2,200円 ／ 1歳・2歳（3歳未満）無料！</li><li>授乳室・おむつ替え台・ベビーカー入場・食べ物持込 すべてOK</li><li>専用駐車場なし → 近隣コインパーキング利用</li><li>6F「BLUE ROOM」：知床の海テーマデジタルアート、1時間に1回シャチ登場</li><li>6F「シロクマベーカリー&」でランチ・軽食OK</li></ul><br><a class="sche-link" href="https://aoao-sapporo.blue/" target="_blank">AOAO SAPPORO公式</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">13:00</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🍜 昼食</div>
+            <div class="sche-ev-sub">札幌市内でグルメ（すすきの・大通エリア）</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>スープカレー・ラーメン・海鮮丼など北海道グルメを楽しもう</li><li>AOAOから徒歩圏内に飲食店多数</li></ul></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">14:00</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🚗 小樽へ出発</div>
+            <div class="sche-ev-sub">札幌市内から約40分ドライブ</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">14:40<br>着</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🛶 小樽 観光</div>
+            <div class="sche-ev-sub">運河・堺町通り散策（約2時間）</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>おすすめ①：小樽運河（散策路はベビーカーOK・写真映え◎）</li><li>おすすめ②：堺町通り（ガラス工芸・オルゴール堂・スイーツ食べ歩き）</li><li>おすすめ③：ルタオ本店（ドゥーブルフロマージュが絶品）</li><li>駐車場：港町7-7「観光駐車場」→ 運河まで徒歩5分・最大1,000円</li><li>⚠️ 石畳多め → ベビーカーはしっかりしたタイヤのものが◎</li><li>⚠️ お盆シーズンは激混み。駐車場は早めに確保を</li></ul><br><a class="sche-link" href="https://otaru.gr.jp/" target="_blank">小樽観光協会</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">17:00</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🚗 ホテルへ出発</div>
+            <div class="sche-ev-sub">小樽から約40〜50分</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">18:00<br>予定</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🍽 ホテル夕食</div>
+            <div class="sche-ev-sub">ガトーキングダム ／ 要時間調整</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>夕食時刻はホテルに事前連絡して18:00以降に設定してもらう</li><li>電話：011-773-2211</li></ul></div>
+          </div>
+        </div>
         </div>
       </div>
-      <div class="schedule-day">
-        <div class="day-header">🗓️ DAY 3 ── 2026年8月25日（火）帰還の日</div>
-        <div class="schedule-items">
-          <div class="schedule-item"><div class="s-time">午前</div><div class="s-content"><b>🛍️ おみやげ・空港へ</b><small>最後の北海道を楽しもう</small></div></div>
-          <div class="schedule-item"><div class="s-time">午後</div><div class="s-content"><b>✈️ 新千歳空港 → 茨城空港</b><small>無事帰還！チャンピオンリボン獲得</small></div></div>
+      <div class="sche-day">
+        <div class="sche-day-hd">
+          <span class="sche-day-badge">DAY 3</span>
+          <div>
+            <div class="sche-day-title">帰還の日</div>
+            <div class="sche-day-date">2026年8月25日（火）</div>
+          </div>
+        </div>
+        <div class="sche-events">
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">朝</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🍳 ホテル朝食</div>
+            <div class="sche-ev-sub">ガトーキングダム ／ 朝食付きプラン</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">11:00<br>CO</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">🏨 チェックアウト</div>
+            <div class="sche-ev-sub">シャトレーゼガトーキングダムサッポロ</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">11:00〜</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🛍 おみやげ・自由時間</div>
+            <div class="sche-ev-sub">ホテル周辺 or 札幌市内</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>新千歳空港でも充実しているので、空港でまとめて買うのもOK</li><li>お土産ページも参考に！</li></ul></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">15:30<br>目安</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-warn">⚠️ 要注意</span><br><div class="sche-ev-title">🚗 レンタカー返却へ出発</div>
+            <div class="sche-ev-sub">新千歳空港ラベンダー店へ向かう</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>返却は16:00予約だが、出発17:45の2時間前推奨=15:45</li><li>返却後の送迎バス（7分）＋搭乗手続きを考えると15:30出発が安心</li><li>渋滞・子どもの機嫌次第でさらに早めに出ることも検討を</li></ul></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">16:00<br>返却</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">🚗 レンタカー返却</div>
+            <div class="sche-ev-sub">ホンダレンタリース北海道 新千歳空港ラベンダー店</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>返却後：送迎バスで空港へ（約7分）</li><li>⚠️ 出発2時間前（15:45）までの返却を推奨</li><li>電話：011-241-4500（SKY0794便名を伝える）</li></ul></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">〜</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🚌 送迎バスで空港へ</div>
+            <div class="sche-ev-sub">営業所→新千歳空港 約7分</div>
+            
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">17:45<br>発</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <span class="sche-must">必須</span><br><div class="sche-ev-title">✈️ 新千歳空港 出発</div>
+            <div class="sche-ev-sub">SKY0794 ／ 座席 28F・28G</div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>搭乗口へは余裕を持って20分前までに</li><li>子連れ優先搭乗：搭乗口で申し出るとOK</li><li>おみやげは出発前に！閉まる店舗もあるので早めに</li></ul><br><a class="sche-link" href="https://www.skymark.co.jp/" target="_blank">スカイマーク</a></div>
+          </div>
+        </div>
+        <div class="sche-ev">
+          <div class="sche-ev-left">
+            <div class="sche-tbox">19:10<br>着</div>
+            <div class="sche-conn"></div>
+          </div>
+          <div class="sche-ev-body">
+            <div class="sche-ev-title">🏠 茨城空港 到着</div>
+            <div class="sche-ev-sub">おかえり！& おつかれさまでした！</div>
+            
+          </div>
+        </div>
         </div>
       </div>
     </section>
@@ -1361,6 +1615,18 @@ function omRecalc() {
   if (remainEl) {
     remainEl.textContent = (remain < 0 ? '-¥' : '¥') + Math.abs(remain).toLocaleString();
     remainEl.className = remain < 0 ? 'over' : '';
+  }
+}
+
+
+function scheToggle(btn) {
+  var d = btn.nextElementSibling;
+  if (d.style.display === 'none') {
+    d.style.display = 'block';
+    btn.textContent = '▼ 閉じる';
+  } else {
+    d.style.display = 'none';
+    btn.textContent = '▶ くわしく見る';
   }
 }
 
