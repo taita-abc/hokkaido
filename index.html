@@ -8,6 +8,16 @@
 :root{
   --ink:#17243d; --blue:#2d62ad; --paper:#fffdf2;
   --gold:#ffd66e; --green:#16a06f;
+  /* 旅程表用（以前は未定義だった変数を実値で補完） */
+  --surface-1:#ffffff; --border-strong:var(--ink); --border:#e8e0d0;
+  --border-accent:var(--ink); --bg-accent:var(--ink); --text-accent:#ffffff;
+  --text-primary:var(--ink); --text-secondary:#5d6678;
+  --bg-danger:#ffe3e3; --text-danger:#b23b3b;
+  --bg-warning:#fff3cd; --text-warning:#8a6100;
+  --font-mono:'Courier New',monospace; --radius:8px;
+  --day1:#2d62ad; --day1-badge:#173f73;
+  --day2:#16a06f; --day2-badge:#0c6b49;
+  --day3:#c8862e; --day3-badge:#8c5c17;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -447,27 +457,31 @@ section{
 .om-qty-btn:active{background:#1a50a8}
 #om-qty-num{font-size:13px;font-family:monospace;color:#222;min-width:28px;text-align:center}
 
-/* ===== 旅程表 ===== */
-.sche-day{margin-bottom:18px}
-.sche-day-hd{display:flex;align-items:center;gap:10px;background:var(--surface-1);border:0.5px solid var(--border-strong);border-radius:12px;padding:10px 14px;margin-bottom:10px}
-.sche-day-badge{background:var(--bg-accent);color:var(--text-accent);font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--radius);white-space:nowrap}
-.sche-day-title{font-size:14px;font-weight:500;color:var(--text-primary)}
-.sche-day-date{font-size:11px;color:var(--text-secondary)}
-.sche-events{padding:0 4px}
-.sche-ev{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+/* ===== 旅程表（文字拡大・DAY色分け・生き物アイコン対応） ===== */
+.sche-day{margin-bottom:22px;border:3px solid var(--ink);border-radius:14px;overflow:hidden;box-shadow:4px 4px 0 var(--ink)}
+.sche-day-hd{display:flex;align-items:center;gap:12px;background:var(--bg-accent);border-bottom:3px solid var(--ink);padding:12px 14px}
+.sche-day-badge{background:var(--day-badge,var(--ink));color:#fff;font-size:14px;font-weight:900;padding:4px 12px;border-radius:999px;white-space:nowrap;border:2px solid rgba(255,255,255,.6)}
+.sche-day-title{font-size:17px;font-weight:900;color:#fff}
+.sche-day-date{font-size:12px;color:#fff;opacity:.9;font-weight:700}
+.sche-day-icon{width:36px;height:36px;margin-left:auto;image-rendering:pixelated;flex-shrink:0;filter:drop-shadow(1px 1px 0 rgba(0,0,0,.3))}
+.sche-day:nth-of-type(1) .sche-day-hd{--bg-accent:var(--day1);--day-badge:var(--day1-badge)}
+.sche-day:nth-of-type(2) .sche-day-hd{--bg-accent:var(--day2);--day-badge:var(--day2-badge)}
+.sche-day:nth-of-type(3) .sche-day-hd{--bg-accent:var(--day3);--day-badge:var(--day3-badge)}
+.sche-events{padding:6px 10px 4px;background:var(--surface-1)}
+.sche-ev{display:flex;gap:10px;padding:10px 2px;border-bottom:1px solid var(--border)}
 .sche-ev:last-child{border-bottom:none}
-.sche-ev-left{display:flex;flex-direction:column;align-items:center;min-width:46px}
-.sche-tbox{background:var(--surface-1);border:0.5px solid var(--border-strong);border-radius:6px;padding:3px 5px;font-size:10px;font-weight:500;color:var(--text-primary);text-align:center;line-height:1.3;font-family:var(--font-mono);white-space:nowrap}
-.sche-conn{width:1.5px;flex:1;background:var(--border);margin:2px auto 0;min-height:10px}
+.sche-ev-left{display:flex;flex-direction:column;align-items:center;min-width:58px}
+.sche-tbox{background:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:5px 6px;font-size:15px;font-weight:900;color:#ffd66e;text-align:center;line-height:1.25;font-family:var(--font-mono);white-space:nowrap;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.sche-conn{width:2px;flex:1;background:var(--border-strong);margin:3px auto 0;min-height:12px}
 .sche-ev-body{flex:1;padding-top:2px}
-.sche-must{display:inline-block;background:var(--bg-danger);color:var(--text-danger);font-size:9px;padding:1px 6px;border-radius:3px;margin-bottom:3px;font-weight:500}
-.sche-warn{display:inline-block;background:var(--bg-warning);color:var(--text-warning);font-size:9px;padding:1px 6px;border-radius:3px;margin-bottom:3px;font-weight:500}
-.sche-ev-title{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.4}
-.sche-ev-sub{font-size:11px;color:var(--text-secondary);margin-top:2px;line-height:1.4}
-.sche-toggle{background:none;border:0.5px solid var(--border-strong);border-radius:6px;font-size:10px;color:var(--text-secondary);padding:3px 8px;cursor:pointer;margin-top:5px;font-family:inherit}
-.sche-detail{margin-top:6px;background:var(--surface-1);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--text-secondary);line-height:1.6}
-.sche-detail li{margin-left:12px;margin-bottom:2px}
-.sche-link{display:inline-block;margin-top:4px;font-size:10px;color:var(--text-accent);border:0.5px solid var(--border-accent);border-radius:4px;padding:2px 7px;background:var(--bg-accent)}
+.sche-must{display:inline-block;background:var(--bg-danger);color:var(--text-danger);font-size:10px;padding:2px 8px;border-radius:4px;margin-bottom:4px;font-weight:900}
+.sche-warn{display:inline-block;background:var(--bg-warning);color:var(--text-warning);font-size:10px;padding:2px 8px;border-radius:4px;margin-bottom:4px;font-weight:900}
+.sche-ev-title{font-size:15px;font-weight:900;color:var(--text-primary);line-height:1.4}
+.sche-ev-sub{font-size:12.5px;color:var(--text-secondary);margin-top:3px;line-height:1.5}
+.sche-toggle{background:none;border:2px solid var(--border-strong);border-radius:999px;font-size:11px;font-weight:700;color:var(--text-secondary);padding:4px 10px;cursor:pointer;margin-top:6px;font-family:inherit}
+.sche-detail{margin-top:7px;background:#f0ead8;border-radius:10px;padding:9px 11px;font-size:12.5px;color:var(--text-primary);line-height:1.65}
+.sche-detail li{margin-left:14px;margin-bottom:3px}
+.sche-link{display:inline-block;margin-top:5px;font-size:11px;font-weight:700;color:#fff;border:2px solid var(--ink);border-radius:6px;padding:3px 9px;background:var(--blue)}
 .sche-free-box{background:var(--bg-success);border:0.5px solid var(--border-success);border-radius:8px;padding:8px 10px;margin-top:5px}
 .sche-free-title{font-size:11px;font-weight:500;color:var(--text-success);margin-bottom:4px}
 .sche-free-item{font-size:11px;color:var(--text-secondary);margin-bottom:2px}
@@ -692,6 +706,7 @@ section{
       <div class="sche-day">
         <div class="sche-day-hd">
           <span class="sche-day-badge">DAY 1</span>
+          <img class="sche-day-icon" data-creature="シマエナガ" alt="">
           <div>
             <div class="sche-day-title">出発の日</div>
             <div class="sche-day-date">2026年8月23日（日）</div>
@@ -758,6 +773,7 @@ section{
       <div class="sche-day">
         <div class="sche-day-hd">
           <span class="sche-day-badge">DAY 2</span>
+          <img class="sche-day-icon" data-creature="キタキツネ" alt="">
           <div>
             <div class="sche-day-title">探索の日</div>
             <div class="sche-day-date">2026年8月24日（月）</div>
@@ -846,6 +862,7 @@ section{
       <div class="sche-day">
         <div class="sche-day-hd">
           <span class="sche-day-badge">DAY 3</span>
+          <img class="sche-day-icon" data-creature="オオワシ" alt="">
           <div>
             <div class="sche-day-title">帰還の日</div>
             <div class="sche-day-date">2026年8月25日（火）</div>
@@ -1619,6 +1636,15 @@ function omRecalc() {
 }
 
 
+function scheFillDayIcons(){
+  document.querySelectorAll('.sche-day-icon').forEach(function(icon){
+    var name = icon.getAttribute('data-creature');
+    if(!name) return;
+    var src = document.querySelector('.creature-img[alt="' + name + '"]');
+    if(src){ icon.src = src.src; }
+  });
+}
+document.addEventListener('DOMContentLoaded', scheFillDayIcons);
 function scheToggle(btn) {
   var d = btn.nextElementSibling;
   if (d.style.display === 'none') {
