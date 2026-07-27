@@ -1714,7 +1714,9 @@ async function gasMigrateBadgesToLocal() {
     var shared = APP_DATA.badges[bid];
     if (!shared || !shared.url) continue;
     var local = await dbGet("badge_photos", bid);
-    if (!local) {
+    var localTime = local && local.timestamp ? new Date(local.timestamp).getTime() : 0;
+    var sharedTime = shared.timestamp ? new Date(shared.timestamp).getTime() : 0;
+    if (!local || sharedTime > localTime) {
       await dbPut("badge_photos", { id: bid, photo: shared.url, timestamp: shared.timestamp || new Date().toISOString() });
     }
   }
