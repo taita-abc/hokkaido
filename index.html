@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>及川家遠征隊 北海道地方完全攻略ガイド</title>
+<title>及川家遠征隊 北海道旅行完全攻略ガイド</title>
 <style>
 :root{
   --ink:#17243d; --blue:#2d62ad; --paper:#fffdf2;
@@ -552,7 +552,7 @@ section{
 <body>
 
 <header>
-  <h1>🗺️ 北海道地方完全攻略ガイド</h1>
+  <h1>🗺️ 北海道旅行完全攻略ガイド</h1>
   <p class="sub">及川家遠征隊 2026 冒険記録</p>
   <span class="date-badge">📅 2026.08.23（日）〜 08.25（火）</span>
 </header>
@@ -714,7 +714,7 @@ section{
   <!-- 「北海道広域」テキスト（右上） -->
   <rect x="235" y="5" width="120" height="18" rx="4" fill="white" opacity="0.7"/>
   <text x="295" y="18" font-size="9" font-family="sans-serif" text-anchor="middle"
-    fill="#336" font-weight="bold">📍 札幌・千歳エリア</text>
+    fill="#336" font-weight="bold">📍 道央エリア</text>
 
   <!-- 凡例 -->
   <rect x="262" y="205" width="92" height="26" rx="3" fill="white" opacity="0.82"/>
@@ -728,7 +728,7 @@ section{
         <div id="home-creature-grid" class="home-creature-grid" onclick="refreshHomeCreatures()" title="タップで更新"></div>
         <div>
           <b>及川家遠征隊</b>
-          <p>おかえり！ここは及川家遠征隊の北海道地方完全攻略ガイドだよ。まずは旅程とバッジケースを確認しよう！</p>
+          <p>おかえり！ここは及川家遠征隊の北海道旅行完全攻略ガイドだよ。まずは旅程とバッジケースを確認しよう！</p>
         </div>
       </div>
       <div class="tile-grid">
@@ -1382,6 +1382,46 @@ const BADGES = [
   { id:"b8", name:"スイーツバッジ",    desc:"お土産入手",            img:"sweets" },
 ];
 
+// ====== GAS連携（家族間データ共有） ======
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwwyD8NRzWwSAXdInQpTPottbwkkyx72qFTNyz-FsE18bU0BFikY9pEy4zgcHTVpdQ/exec';
+var APP_DATA = { badges: {}, album: [], omiyage: { budget: 30000, cart: {} }, bag: {} };
+var gasLoadPromise = null;
+
+function gasEnsureLoaded() {
+  if (!gasLoadPromise) {
+    gasLoadPromise = fetch(GAS_URL)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        APP_DATA.badges = (data && data.badges) || {};
+        APP_DATA.album = (data && data.album) || [];
+        APP_DATA.omiyage = (data && data.omiyage) || { budget: 30000, cart: {} };
+        APP_DATA.bag = (data && data.bag) || {};
+      })
+      .catch(function (err) {
+        console.error('GAS読み込みエラー（このデバイスのみの状態で続行します）', err);
+      });
+  }
+  return gasLoadPromise;
+}
+
+function gasSave() {
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'save', data: APP_DATA })
+  }).catch(function (err) { console.error('GAS保存エラー', err); });
+}
+
+// dataURL（"data:image/jpeg;base64,xxxx"）→ Googleドライブへアップロードし、共有URLを返す
+function gasUploadPhoto(dataUrl, folder, filename) {
+  var base64 = dataUrl.split(',')[1];
+  return fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'uploadPhoto', base64: base64, mime: 'image/jpeg', filename: filename, folder: folder })
+  }).then(function (r) { return r.json(); });
+}
+
 // ====== IndexedDB ======
 let db = null;
 function openDB() {
@@ -1535,6 +1575,13 @@ async function onBadgePhoto(event, bid) {
     }
   }
   event.target.value = "";
+  // 家族間共有：Googleドライブへアップロードして保存
+  gasUploadPhoto(photo, "badge", "badge_" + bid + "_" + Date.now() + ".jpg").then(function (res) {
+    if (res && res.ok) {
+      APP_DATA.badges[bid] = { url: res.url, timestamp: new Date().toISOString() };
+      gasSave();
+    }
+  }).catch(function (err) { console.error("バッジ写真の共有アップロードに失敗", err); });
 }
 
 // ====== レポートスロット更新 ======
@@ -1566,19 +1613,22 @@ async function deleteBadgePhoto(bid) {
     var dateEl = document.getElementById("badge-complete-date");
     if (dateEl) dateEl.classList.remove("show");
   }
+  delete APP_DATA.badges[bid];
+  gasSave();
 }
 
 // ====== レポートページ読み込み ======
 async function loadReport() {
+  await gasEnsureLoaded();
   for (var i = 0; i < BADGES.length; i++) {
     var b = BADGES[i];
     var rec = await dbGet("badge_photos", b.id);
     updateReportSlot(b.id, rec ? rec.photo : null);
   }
-  await renderAlbum();
+  renderAlbum();
 }
 
-// ====== アルバム ======
+// ====== アルバム（家族間共有） ======
 function triggerAlbumUpload() {
   document.getElementById("album-input").click();
 }
@@ -1587,18 +1637,32 @@ async function onAlbumPhoto(event) {
   if (!file) return;
   var photo = await compressImage(file, 800, 0.8);
   var comment = prompt("一言コメント（空白でもOK）") || "";
-  await dbPut("album_photos", { photo: photo, comment: comment, timestamp: new Date().toISOString() });
-  await renderAlbum();
-  showToast("写真を追加しました 📷");
+  var entryId = "a" + Date.now() + Math.floor(Math.random() * 1000);
+  showToast("アップロード中…📤");
   event.target.value = "";
+  try {
+    var res = await gasUploadPhoto(photo, "report", "album_" + entryId + ".jpg");
+    if (res && res.ok) {
+      APP_DATA.album.push({ id: entryId, url: res.url, comment: comment, timestamp: new Date().toISOString() });
+      gasSave();
+      renderAlbum();
+      showToast("写真を追加しました 📷");
+    } else {
+      showToast("アップロードに失敗しました");
+    }
+  } catch (err) {
+    console.error("アルバム写真の共有アップロードに失敗", err);
+    showToast("アップロードに失敗しました");
+  }
 }
-async function deleteAlbumPhoto(id) {
+function deleteAlbumPhoto(id) {
   if (!confirm("この写真を削除しますか？")) return;
-  await dbDelete("album_photos", id);
-  await renderAlbum();
+  APP_DATA.album = APP_DATA.album.filter(function (item) { return item.id !== id; });
+  gasSave();
+  renderAlbum();
 }
-async function renderAlbum() {
-  var items = await dbGetAll("album_photos");
+function renderAlbum() {
+  var items = APP_DATA.album || [];
   var grid = document.getElementById("album-grid");
   var empty = document.getElementById("album-empty");
   if (!grid) return;
@@ -1608,14 +1672,14 @@ async function renderAlbum() {
     return;
   }
   if (empty) empty.style.display = "none";
-  items.reverse().forEach(function(item) {
+  items.slice().reverse().forEach(function(item) {
     var dateStr = item.timestamp ? new Date(item.timestamp).toLocaleDateString("ja-JP") : "";
     var card = document.createElement("div");
     card.className = "album-card";
     var safeComment = (item.comment || "（コメントなし）").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    card.innerHTML = '<img src="' + item.photo + '" alt="album">'
+    card.innerHTML = '<img src="' + item.url + '" alt="album">'
       + '<div class="album-card-body">'
-      + '<button class="album-card-del" onclick="deleteAlbumPhoto(' + item.id + ')">&#x2715;</button>'
+      + '<button class="album-card-del" onclick="deleteAlbumPhoto(\'' + item.id + '\')">&#x2715;</button>'
       + '<div class="album-card-comment">' + safeComment + '</div>'
       + '<div class="album-card-date">' + dateStr + '</div>'
       + '</div>';
@@ -1643,8 +1707,22 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function() { el.classList.remove("show"); }, 2200);
 }
+async function gasMigrateBadgesToLocal() {
+  var ids = Object.keys(APP_DATA.badges || {});
+  for (var i = 0; i < ids.length; i++) {
+    var bid = ids[i];
+    var shared = APP_DATA.badges[bid];
+    if (!shared || !shared.url) continue;
+    var local = await dbGet("badge_photos", bid);
+    if (!local) {
+      await dbPut("badge_photos", { id: bid, photo: shared.url, timestamp: shared.timestamp || new Date().toISOString() });
+    }
+  }
+}
 window.addEventListener("DOMContentLoaded", async function() {
   await openDB();
+  await gasEnsureLoaded();
+  await gasMigrateBadgesToLocal();
   await updateBadgeDisplay();
   refreshHomeCreatures();
 });
@@ -1689,16 +1767,25 @@ var OM_ITEMS = [
   {id:'kaitakuokaki', name:'北海道開拓おかき',     price:490,  cat:'食品',    color:'#d4b080', desc:'海の幸がたっぷり練りこまれたおかき。7日間かけて丁寧に作られた逸品。', place:'新千歳 北菓楼', url:'http://www.kitakaro.com/'},
 ];
 
-var omCart = {};
 var omSelectedId = null;
+var omSaveTimer = null;
+function omDebouncedSave() {
+  clearTimeout(omSaveTimer);
+  omSaveTimer = setTimeout(function () { gasSave(); }, 500);
+}
 
-function initOmiyage() {
+async function initOmiyage() {
+  await gasEnsureLoaded();
+  if (!APP_DATA.omiyage) APP_DATA.omiyage = { budget: 30000, cart: {} };
+  if (!APP_DATA.omiyage.cart) APP_DATA.omiyage.cart = {};
   var imgs = document.querySelectorAll('#page-trainers img');
   if (imgs.length > 0) {
     var pick = imgs[Math.floor(Math.random() * imgs.length)];
     var keeper = document.getElementById('om-keeper');
     if (keeper) { keeper.src = pick.src; keeper.alt = pick.alt; keeper.style.display = 'block'; }
   }
+  var budgetInput = document.getElementById('om-budget-input');
+  if (budgetInput) budgetInput.value = APP_DATA.omiyage.budget || 30000;
   omRenderList();
   omRecalc();
   if (OM_ITEMS.length > 0) omSelect(OM_ITEMS[0].id);
@@ -1707,6 +1794,7 @@ function initOmiyage() {
 function omRenderList() {
   var list = document.getElementById('om-item-list');
   if (!list) return;
+  var cart = APP_DATA.omiyage.cart;
   var cats = [];
   var catMap = {};
   OM_ITEMS.forEach(function(it) {
@@ -1717,7 +1805,7 @@ function omRenderList() {
   cats.forEach(function(cat) {
     html += '<div class="om-cat-hd">── ' + cat + ' ──</div>';
     catMap[cat].forEach(function(it) {
-      var qty = omCart[it.id] || 0;
+      var qty = cart[it.id] || 0;
       var sel = (it.id === omSelectedId) ? ' sel' : '';
       var arrow = (it.id === omSelectedId) ? '▶' : '\u00a0';
       var badge = qty > 0 ? '<span class="om-qty-badge">×' + qty + '</span>' : '';
@@ -1747,26 +1835,30 @@ function omSelect(id) {
   if (text) text.textContent = it.desc;
   if (place) place.textContent = '📍 ' + it.place;
   if (link) { link.href = it.url; link.style.display = 'block'; }
-  if (qty) qty.textContent = (omCart[id] || 0) + '個';
+  if (qty) qty.textContent = (APP_DATA.omiyage.cart[id] || 0) + '個';
 }
 
 function omChangeQty(delta) {
   if (!omSelectedId) return;
-  var cur = omCart[omSelectedId] || 0;
+  var cart = APP_DATA.omiyage.cart;
+  var cur = cart[omSelectedId] || 0;
   var next = Math.max(0, cur + delta);
-  if (next === 0) delete omCart[omSelectedId];
-  else omCart[omSelectedId] = next;
+  if (next === 0) delete cart[omSelectedId];
+  else cart[omSelectedId] = next;
   omRenderList();
   omRecalc();
   var qty = document.getElementById('om-qty-num');
-  if (qty) qty.textContent = (omCart[omSelectedId] || 0) + '個';
+  if (qty) qty.textContent = (cart[omSelectedId] || 0) + '個';
+  omDebouncedSave();
 }
 
 function omRecalc() {
   var budget = parseInt(document.getElementById('om-budget-input').value) || 0;
+  APP_DATA.omiyage.budget = budget;
   var total = 0;
+  var cart = APP_DATA.omiyage.cart;
   OM_ITEMS.forEach(function(it) {
-    if (omCart[it.id]) total += it.price * omCart[it.id];
+    if (cart[it.id]) total += it.price * cart[it.id];
   });
   var remain = budget - total;
   var totalEl = document.getElementById('om-total-amt');
@@ -1776,6 +1868,7 @@ function omRecalc() {
     remainEl.textContent = (remain < 0 ? '-¥' : '¥') + Math.abs(remain).toLocaleString();
     remainEl.className = remain < 0 ? 'over' : '';
   }
+  omDebouncedSave();
 }
 
 
@@ -1974,14 +2067,14 @@ document.addEventListener('DOMContentLoaded', function(){
   matchNewRound();
 });
 
-// ====== 持ち物バッグ ======
+// ====== 持ち物バッグ（家族間共有） ======
 var BAG_ITEMS = ['doc1','doc2','doc3','doc4','kid1','kid2','kid3','kid4','kid5','kid6','dev1','dev2','dev3','dev4','dev5','dev6','etc1','etc2','etc3','etc4','etc5','etc6'];
 function bagGetState(){
-  try { return JSON.parse(localStorage.getItem('oikawa_bag_checklist')) || {}; }
-  catch (e) { return {}; }
+  return APP_DATA.bag || {};
 }
 function bagSaveState(state){
-  localStorage.setItem('oikawa_bag_checklist', JSON.stringify(state));
+  APP_DATA.bag = state;
+  gasSave();
 }
 function bagToggle(id){
   var state = bagGetState();
@@ -1990,7 +2083,7 @@ function bagToggle(id){
   bagRender();
 }
 function bagReset(){
-  localStorage.removeItem('oikawa_bag_checklist');
+  bagSaveState({});
   bagRender();
 }
 function bagRender(){
@@ -2015,7 +2108,10 @@ function bagRender(){
   var fill = document.getElementById('bag-prog-fill');
   if (fill) fill.style.width = (total ? (checked / total * 100) : 0) + '%';
 }
-document.addEventListener('DOMContentLoaded', bagRender);
+document.addEventListener('DOMContentLoaded', async function(){
+  await gasEnsureLoaded();
+  bagRender();
+});
 
 function scheToggle(btn) {
   var d = btn.nextElementSibling;
