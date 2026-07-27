@@ -234,11 +234,15 @@ section{
 .game-panel{display:none;padding:16px 14px 18px;}
 .game-panel.active{display:block}
 .game-instruction{text-align:center;font-weight:900;font-size:.95rem;margin-bottom:14px;color:var(--ink)}
+.diff-tabs{display:flex;justify-content:center;gap:6px;margin-bottom:10px}
+.diff-btn{background:#fff;border:2px solid var(--ink);border-radius:999px;padding:5px 12px;font-weight:900;font-size:.75rem;cursor:pointer;font-family:inherit;color:var(--ink);opacity:.55}
+.diff-btn.active{opacity:1;background:var(--blue);color:#fff}
 .game-target{display:flex;justify-content:center;margin-bottom:16px}
 .game-target-box{width:110px;height:110px;background:#fff;border:4px solid var(--ink);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:4px 4px 0 var(--ink)}
 .game-target-box img{width:88px;height:88px;object-fit:contain}
-.game-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:360px;margin:0 auto}
-.choice-card{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .1s}
+.game-choices{display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto}
+.game-choices-row{display:flex;justify-content:center;gap:12px}
+.choice-card{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .1s;flex:0 0 104px;box-sizing:border-box}
 .choice-card:active{transform:scale(.95)}
 .choice-card img{width:100%;height:64px;object-fit:contain;display:block}
 .choice-card.correct{background:#c8f0c8;border-color:var(--green)}
@@ -478,12 +482,12 @@ section{
 /* ===== お土産ページ（ポケモンショップ風） ===== */
 #om-wrapper{border:3px solid #222;border-radius:8px;overflow:hidden;image-rendering:pixelated}
 #om-budget-bar{background:#1a1a4a;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #222}
-.om-lbl{color:#f8f030;font-size:11px;font-family:monospace;font-weight:500}
-#om-budget-input{color:#f8f030;background:#1a1a4a;border:none;outline:none;font-size:14px;font-family:monospace;font-weight:500;width:90px;text-align:right}
+.om-lbl{color:#f8f030;font-size:15px;font-family:monospace;font-weight:500}
+#om-budget-input{color:#f8f030;background:#1a1a4a;border:none;outline:none;font-size:19px;font-family:monospace;font-weight:500;width:110px;text-align:right}
 .om-totals{text-align:right}
-#om-remain{color:#f8f030;font-size:12px;font-family:monospace}
+#om-remain{color:#f8f030;font-size:16px;font-family:monospace}
 #om-remain.over{color:#ff5050}
-#om-total-amt{color:#f8f030;font-size:12px;font-family:monospace}
+#om-total-amt{color:#f8f030;font-size:16px;font-family:monospace}
 #om-main{display:flex;height:200px;border-bottom:3px solid #222}
 #om-scene{width:110px;flex-shrink:0;position:relative;overflow:hidden;border-right:3px solid #222}
 #om-keeper{position:absolute;width:90px;bottom:55px;left:50%;transform:translateX(-50%);z-index:1;image-rendering:pixelated;}
@@ -503,17 +507,17 @@ section{
 .om-row.sel .om-price{color:#ffe040}
 .om-qty-badge{background:#c0392b;color:#fff;font-size:9px;padding:1px 4px;border-radius:2px;margin-left:3px}
 .om-scroll-hint{text-align:center;color:#2060c8;font-size:14px;padding:1px;background:#f0e8c8;border-top:1px solid #c8b870;flex-shrink:0}
-#om-desc-box{background:#c8e890;padding:8px 10px;display:flex;gap:8px;min-height:90px;border-top:3px solid #222}
-#om-desc-icon{width:32px;height:32px;border:3px solid #222;border-radius:2px;flex-shrink:0;margin-top:2px}
+#om-desc-box{background:#c8e890;padding:10px 12px;display:flex;gap:10px;min-height:100px;border-top:3px solid #222}
+#om-desc-icon{width:40px;height:40px;border:3px solid #222;border-radius:2px;flex-shrink:0;margin-top:2px}
 #om-desc-right{flex:1;overflow:hidden}
-#om-desc-name{font-size:12px;font-weight:500;font-family:monospace;color:#222;margin-bottom:1px}
-#om-desc-text{font-size:10px;color:#333;font-family:monospace;line-height:1.4;margin-bottom:2px}
-#om-desc-place{font-size:10px;color:#555;font-family:monospace}
-#om-desc-link{font-size:10px;color:#0050c0;font-family:monospace;text-decoration:underline;display:block;margin-top:1px}
+#om-desc-name{font-size:16px;font-weight:500;font-family:monospace;color:#222;margin-bottom:2px}
+#om-desc-text{font-size:13px;color:#333;font-family:monospace;line-height:1.45;margin-bottom:3px}
+#om-desc-place{font-size:13px;color:#555;font-family:monospace}
+#om-desc-link{font-size:13px;color:#0050c0;font-family:monospace;text-decoration:underline;display:block;margin-top:2px}
 .om-qty-row{display:flex;align-items:center;gap:6px;margin-top:5px}
-.om-qty-btn{background:#2060c8;color:#fff;border:2px solid #222;width:26px;height:26px;font-size:16px;font-family:monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;padding:0;line-height:1;flex-shrink:0}
+.om-qty-btn{background:#2060c8;color:#fff;border:2px solid #222;width:32px;height:32px;font-size:20px;font-family:monospace;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;padding:0;line-height:1;flex-shrink:0}
 .om-qty-btn:active{background:#1a50a8}
-#om-qty-num{font-size:13px;font-family:monospace;color:#222;min-width:28px;text-align:center}
+#om-qty-num{font-size:17px;font-family:monospace;color:#222;min-width:32px;text-align:center}
 
 /* ===== 旅程表（文字拡大・DAY色分け・生き物アイコン対応） ===== */
 .sche-day{margin-bottom:22px;border:3px solid var(--ink);border-radius:14px;overflow:hidden;box-shadow:4px 4px 0 var(--ink)}
@@ -1161,6 +1165,11 @@ section{
       </div>
 
       <div class="game-panel active" id="game-match">
+        <div class="diff-tabs">
+          <button class="diff-btn" data-lv="easy" onclick="matchSetDiff('easy')">かんたん</button>
+          <button class="diff-btn active" data-lv="normal" onclick="matchSetDiff('normal')">ふつう</button>
+          <button class="diff-btn" data-lv="hard" onclick="matchSetDiff('hard')">むずかしい</button>
+        </div>
         <p class="game-instruction">おなじ どうぶつを タップしよう！</p>
         <div class="game-target"><div class="game-target-box" id="match-target"></div></div>
         <div class="game-choices" id="match-choices"></div>
@@ -1168,6 +1177,11 @@ section{
       </div>
 
       <div class="game-panel" id="game-memory">
+        <div class="diff-tabs">
+          <button class="diff-btn" data-lv="easy" onclick="memorySetDiff('easy')">かんたん</button>
+          <button class="diff-btn active" data-lv="normal" onclick="memorySetDiff('normal')">ふつう</button>
+          <button class="diff-btn" data-lv="hard" onclick="memorySetDiff('hard')">むずかしい</button>
+        </div>
         <p class="game-instruction">おなじ カードを 2まい みつけよう！</p>
         <div class="memory-board" id="memory-board"></div>
         <p class="game-msg" id="memory-msg"></p>
@@ -1817,23 +1831,43 @@ function gameSwitch(which){
 }
 
 // --- えあわせ ---
+var matchDiff = 'normal';
+var MATCH_DIFF_COUNT = { easy: 2, normal: 3, hard: 5 };
+var MATCH_DIFF_ROWS = { easy: [2], normal: [3], hard: [3, 2] };
+function matchSetDiff(lv){
+  matchDiff = lv;
+  document.querySelectorAll('#game-match .diff-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lv === lv);
+  });
+  matchNewRound();
+}
 function matchNewRound(){
   var speciesPool = gameSpeciesPool();
-  if (speciesPool.length < 3) return;
+  var count = Math.min(MATCH_DIFF_COUNT[matchDiff] || 3, speciesPool.length);
+  if (speciesPool.length < 2) return;
   var pool = gameShuffle(speciesPool);
   var target = pool[0];
-  var choices = gameShuffle(pool.slice(0, 3));
+  var choices = gameShuffle(pool.slice(0, count));
   document.getElementById('match-msg').textContent = '';
   var targetBox = document.getElementById('match-target');
   targetBox.innerHTML = '<img src="' + target.src + '" alt="">';
   var choicesBox = document.getElementById('match-choices');
   choicesBox.innerHTML = '';
-  choices.forEach(function(c){
-    var div = document.createElement('div');
-    div.className = 'choice-card';
-    div.innerHTML = '<img src="' + c.src + '" alt="">';
-    div.onclick = function(){ matchPick(div, c.name === target.name); };
-    choicesBox.appendChild(div);
+  var rows = MATCH_DIFF_ROWS[matchDiff] || [count];
+  var idx = 0;
+  rows.forEach(function(rowSize){
+    if (idx >= choices.length) return;
+    var rowDiv = document.createElement('div');
+    rowDiv.className = 'game-choices-row';
+    choices.slice(idx, idx + rowSize).forEach(function(c){
+      var div = document.createElement('div');
+      div.className = 'choice-card';
+      div.innerHTML = '<img src="' + c.src + '" alt="">';
+      div.onclick = function(){ matchPick(div, c.name === target.name); };
+      rowDiv.appendChild(div);
+    });
+    choicesBox.appendChild(rowDiv);
+    idx += rowSize;
   });
 }
 function matchPick(el, isCorrect){
@@ -1870,17 +1904,29 @@ function gameConfetti(anchorEl){
 
 // --- しんけいすいじゃく ---
 var memoryState = { first: null, second: null, lock: false, matched: 0 };
+var memoryDiff = 'normal';
+var MEMORY_DIFF_PAIRS = { easy: 3, normal: 4, hard: 6 };
+function memorySetDiff(lv){
+  memoryDiff = lv;
+  document.querySelectorAll('#game-memory .diff-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lv === lv);
+  });
+  memoryInit();
+}
 function memoryInit(){
   var speciesPool = gameSpeciesPool();
-  if (speciesPool.length < 4) return;
-  memoryState = { first: null, second: null, lock: false, matched: 0 };
+  var pairCount = Math.min(MEMORY_DIFF_PAIRS[memoryDiff] || 4, speciesPool.length);
+  if (speciesPool.length < 2) return;
+  memoryState = { first: null, second: null, lock: false, matched: 0, total: pairCount };
   var msgEl = document.getElementById('memory-msg');
   msgEl.className = 'game-msg';
   msgEl.textContent = '';
-  var chosen = gameShuffle(speciesPool).slice(0, 4);
+  var chosen = gameShuffle(speciesPool).slice(0, pairCount);
   var pairs = gameShuffle(chosen.concat(chosen));
   var board = document.getElementById('memory-board');
   board.innerHTML = '';
+  var MEMORY_DIFF_COLS = { easy: 3, normal: 4, hard: 4 };
+  board.style.gridTemplateColumns = 'repeat(' + (MEMORY_DIFF_COLS[memoryDiff] || 4) + ',1fr)';
   pairs.forEach(function(c, idx){
     var card = document.createElement('div');
     card.className = 'memory-card';
@@ -1907,7 +1953,7 @@ function memoryFlip(card){
     memoryState.matched++;
     var msgEl = document.getElementById('memory-msg');
     memoryState.first = null; memoryState.second = null; memoryState.lock = false;
-    if (memoryState.matched === 4){
+    if (memoryState.matched === memoryState.total){
       msgEl.className = 'game-msg success';
       msgEl.textContent = '🎉✨ぜんぶみつかったね！！✨🎉';
     } else {
@@ -1997,8 +2043,8 @@ function scheToggle(btn) {
             <span class="om-lbl">¥</span><input type="number" id="om-budget-input" value="30000" min="0" oninput="omRecalc()">
           </div>
           <div class="om-totals">
-            <div><span class="om-lbl" style="font-size:10px">合計 </span><span id="om-total-amt">¥0</span></div>
-            <div><span class="om-lbl" style="font-size:10px">のこり </span><span id="om-remain">¥30,000</span></div>
+            <div><span class="om-lbl" style="font-size:13px">合計 </span><span id="om-total-amt">¥0</span></div>
+            <div><span class="om-lbl" style="font-size:13px">のこり </span><span id="om-remain">¥30,000</span></div>
           </div>
         </div>
 
