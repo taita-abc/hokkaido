@@ -295,7 +295,7 @@ section{
 /* BADGES */
 .progress-box{background:var(--ink);color:white;border-radius:14px;padding:14px;margin-bottom:14px;}
 /* ===== 持ち物バッグ ===== */
-.bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:12px 14px;margin-bottom:8px;}
+.bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:7px 14px 10px;margin-bottom:8px;}
 .bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px;}
 .bag-prog-bar{height:14px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;}
 #bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
@@ -2307,13 +2307,18 @@ function bagFindCategory(id){
 function bagCheckAllCategory(cat){
   var state = bagGetState();
   var dir = state.returnStarted ? 'return' : 'outbound';
-  (BAG_CATS[cat] || []).forEach(function(id){ state[dir][id] = true; });
+  var ids = BAG_CATS[cat] || [];
+  var allChecked = ids.length > 0 && ids.every(function(id){ return !!state[dir][id]; });
+  var newVal = !allChecked;
+  ids.forEach(function(id){ state[dir][id] = newVal; });
   gasSave();
   bagRender();
 }
 function bagCheckAllPre(){
   var state = bagGetState();
-  BAG_PRE_IDS.forEach(function(id){ state.predeparture[id] = true; });
+  var allChecked = BAG_PRE_IDS.every(function(id){ return !!state.predeparture[id]; });
+  var newVal = !allChecked;
+  BAG_PRE_IDS.forEach(function(id){ state.predeparture[id] = newVal; });
   gasSave();
   bagRender();
 }
@@ -2381,7 +2386,7 @@ function bagRenderWhaleMessage(state){
   var lines, showReturnBtn = false, showHomeBtn = false;
 
   if (state.homecomingDone) {
-    lines = ['おかえりなさい。', '見たもの、食べたもの、笑った時間。全部が家族の思い出になったね。', 'また、みんなで旅に出よう。'];
+    lines = ['おかえりなさい。', '見たもの、食べたもの、笑った時間。', '全部が家族の思い出になったね。', 'また、みんなで旅に出よう。'];
   } else if (state.returnStarted) {
     if (retMissing.length === 0) {
       lines = ['忘れ物はないね！思い出も持ち帰ろう！', '家に着くまでが旅行だよ。気を付けて帰ってね。'];
