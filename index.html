@@ -311,7 +311,13 @@ section{
 .bag-tab.active{opacity:1;background:var(--blue);color:#fff;}
 .bag-tabpanel{display:none;}
 .bag-tabpanel.active{display:block;}
-.bag-note{background:#fff7e0;border:2px solid var(--gold);border-radius:12px;padding:10px 14px;margin-bottom:16px;}
+.bag-note{background:#fff7e0;border:2px solid var(--gold);border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;}
+.bag-note-img{width:48px;height:48px;object-fit:contain;flex-shrink:0;}
+.bag-note-bubble{flex:1;position:relative;}
+.kujira-box{display:flex;gap:10px;align-items:center;background:#e8f4fb;border:2px solid var(--blue);border-radius:12px;padding:10px 14px;margin-bottom:10px;}
+.kujira-img{width:52px;height:52px;object-fit:contain;flex-shrink:0;}
+.kujira-bubble{flex:1;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.5;}
+.kujira-actions{display:flex;justify-content:center;margin-bottom:16px;}
 .bag-note-title{font-weight:900;font-size:.85rem;margin-bottom:6px;}
 .bag-note ul{margin:0;padding-left:1.1em;font-size:.8rem;line-height:1.6;}
 .bag-cat{margin-bottom:10px;}
@@ -1232,15 +1238,27 @@ section{
         <div class="bag-prog-bar"><div id="bag-prog-ret-fill"></div></div>
       </div>
 
+      <div class="kujira-box">
+        <img class="kujira-img" id="kujira-img" alt="ザトウクジラ">
+        <div class="kujira-bubble" id="kujira-bubble">読み込み中…</div>
+      </div>
+      <div class="kujira-actions">
+        <button class="reset-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
+        <button class="reset-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
+      </div>
+
       <div class="bag-tabpanel active" id="bagtab-carryon">
         <div class="bag-note">
-          <div class="bag-note-title">✈️ 手荷物に入れておくもの・注意</div>
-          <ul>
-            <li>モバイルバッテリーは手荷物へ</li>
-            <li>貴重品は預け荷物に入れない</li>
-            <li>薬は手荷物へ</li>
-            <li>機内ですぐ使うものは手荷物へ</li>
-          </ul>
+          <img class="bag-note-img" id="bagnote-bear-img" alt="ヒグマ">
+          <div class="bag-note-bubble">
+            <div class="bag-note-title">✈️ 手荷物に入れておくもの・注意</div>
+            <ul>
+              <li>モバイルバッテリーは手荷物へ</li>
+              <li>貴重品は預け荷物に入れない</li>
+              <li>薬は手荷物へ</li>
+              <li>機内ですぐ使うものは手荷物へ</li>
+            </ul>
+          </div>
         </div>
       <div class="bag-cat">
         <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">📋 貴重品・必須書類</span> <span class="bag-cat-count" id="bagcat-h1"></span></div>
@@ -2248,7 +2266,33 @@ function bagGetState(){
   if (!APP_DATA.bag.outbound) APP_DATA.bag.outbound = {};
   if (!APP_DATA.bag.return) APP_DATA.bag.return = {};
   if (!APP_DATA.bag.predeparture) APP_DATA.bag.predeparture = {};
+  if (APP_DATA.bag.returnStarted === undefined) APP_DATA.bag.returnStarted = false;
+  if (APP_DATA.bag.homecomingDone === undefined) APP_DATA.bag.homecomingDone = false;
   return APP_DATA.bag;
+}
+var BAG_CAT_NAMES = {
+  h1: '貴重品・必須書類', h2: '電子機器', h3: '身の回り品', h4: '子ども用',
+  p1: '大人用（共通）', p2: '父', p3: '母', p4: '子ども用（共通）',
+  p5: '瑚遥', p6: '智也', p7: '洗面・身支度', p8: 'その他・あると便利'
+};
+function bagFindCategory(id){
+  var cats = Object.keys(BAG_CATS);
+  for (var i = 0; i < cats.length; i++){
+    if (BAG_CATS[cats[i]].indexOf(id) !== -1) return cats[i];
+  }
+  return null;
+}
+function bagStartReturn(){
+  var state = bagGetState();
+  state.returnStarted = true;
+  gasSave();
+  bagRender();
+}
+function bagFinishHomecoming(){
+  var state = bagGetState();
+  state.homecomingDone = true;
+  gasSave();
+  bagRender();
 }
 function bagToggle(dir, id){
   var state = bagGetState();
@@ -2263,7 +2307,7 @@ function bagTogglePre(id){
   bagRender();
 }
 function bagReset(){
-  APP_DATA.bag = { outbound: {}, return: {}, predeparture: {} };
+  APP_DATA.bag = { outbound: {}, return: {}, predeparture: {}, returnStarted: false, homecomingDone: false };
   gasSave();
   bagRender();
 }
@@ -2280,8 +2324,54 @@ function bagToggleCat(hd){
   body.style.display = open ? 'none' : 'block';
   if (arrow) arrow.textContent = open ? '▶' : '▼';
 }
+function bagSetCharacterImages(){
+  var whaleImg = document.getElementById('kujira-img');
+  var bearImg = document.getElementById('bagnote-bear-img');
+  if (whaleImg && !whaleImg.src) {
+    var whaleSrc = document.querySelector('#page-creatures img[alt="ザトウクジラ"]');
+    if (whaleSrc) whaleImg.src = whaleSrc.src;
+  }
+  if (bearImg && !bearImg.src) {
+    var bearSrc = document.querySelector('#page-creatures img[alt="ヒグマ"]');
+    if (bearSrc) bearImg.src = bearSrc.src;
+  }
+}
+function bagRenderWhaleMessage(state){
+  var outMissing = BAG_DUAL_IDS.filter(function(id){ return !state.outbound[id]; });
+  var retMissing = BAG_DUAL_IDS.filter(function(id){ return !state.return[id]; });
+  var bubble = document.getElementById('kujira-bubble');
+  var btnReturn = document.getElementById('btn-start-return');
+  var btnHome = document.getElementById('btn-finish-homecoming');
+  if (!bubble) return;
+  var lines, showReturnBtn = false, showHomeBtn = false;
+
+  if (state.homecomingDone) {
+    lines = ['おかえりなさい。', '見たもの、食べたもの、笑った時間。全部が家族の思い出になったね。', 'また、みんなで旅に出よう。'];
+  } else if (state.returnStarted) {
+    if (retMissing.length === 0) {
+      lines = ['忘れ物はないね！思い出も持ち帰ろう！', '家に着くまでが旅行だよ。気を付けて帰ってね。'];
+      showHomeBtn = true;
+    } else {
+      var catR = bagFindCategory(retMissing[0]);
+      lines = ['帰り、あと' + retMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catR] || '') + '」から見てみよう！'];
+    }
+  } else {
+    if (outMissing.length === 0) {
+      lines = ['準備ばっちり！旅を楽しんで！🐋'];
+      showReturnBtn = true;
+    } else {
+      var catO = bagFindCategory(outMissing[0]);
+      lines = ['行き、あと' + outMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catO] || '') + '」から見てみよう！'];
+    }
+  }
+
+  bubble.innerHTML = lines.join('<br>');
+  if (btnReturn) btnReturn.style.display = showReturnBtn ? 'block' : 'none';
+  if (btnHome) btnHome.style.display = showHomeBtn ? 'block' : 'none';
+}
 function bagRender(){
   var state = bagGetState();
+  bagSetCharacterImages();
 
   // 手荷物・預け荷物（行き/帰り）
   var outChecked = 0, retChecked = 0;
@@ -2327,6 +2417,8 @@ function bagRender(){
   if (preEl) preEl.textContent = preChecked + ' / ' + preTotal;
   var preFill = document.getElementById('bag-prog-pre-fill');
   if (preFill) preFill.style.width = (preTotal ? (preChecked / preTotal * 100) : 0) + '%';
+
+  bagRenderWhaleMessage(state);
 }
 document.addEventListener('DOMContentLoaded', async function(){
   await gasEnsureLoaded();
