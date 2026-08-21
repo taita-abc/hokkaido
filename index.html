@@ -304,10 +304,15 @@ section{
 .bag-item-secret{border-style:dashed;}
 .bag-item-secret.bag-item-locked{opacity:.55;cursor:default;}
 .bag-item-secret:not(.bag-item-locked){border-color:#ff7ec2;background:#fff5fa;}
-#bag-prog-out-fill.bag-complete,#bag-prog-ret-fill.bag-complete{background:linear-gradient(90deg,#ff3d94,#c8146b);animation:bagCompletePulse .6s ease;}
+#bag-prog-out-fill.bag-complete,#bag-prog-ret-fill.bag-complete,#bag-prog-pre-out-fill.bag-complete,#bag-prog-pre-ret-fill.bag-complete{background:linear-gradient(90deg,#ff3d94,#c8146b);animation:bagCompletePulse .6s ease;}
 @keyframes bagCompletePulse{0%{filter:brightness(1)}40%{filter:brightness(1.6)}100%{filter:brightness(1)}}
 .bag-prog-complete{display:none;margin-left:6px;font-size:.68rem;color:#ff7ec2;font-weight:900;letter-spacing:.5px;vertical-align:middle;}
 .bag-prog-complete.show{display:inline-block;}
+.bag-prog-secret-clear{display:none;margin-left:6px;font-size:.68rem;color:#ffd54a;font-weight:900;letter-spacing:.5px;vertical-align:middle;}
+.bag-prog-secret-clear.show{display:inline-block;}
+.bag-item-secret.bag-item-cleared{border-color:#d4a017;background:linear-gradient(135deg,#fff8e1,#ffe9a8);}
+.bag-item-secret.bag-item-shimmer{animation:bagSecretShimmer 1s ease;}
+@keyframes bagSecretShimmer{0%{box-shadow:0 0 0 0 rgba(212,160,23,0)}30%{box-shadow:0 0 14px 4px rgba(212,160,23,.8)}100%{box-shadow:0 0 0 0 rgba(212,160,23,0)}}
 .bag-category{margin-bottom:6px;}
 .bag-cat-head{font-weight:900;font-size:.9rem;margin:14px 0 8px;padding:6px 12px;background:var(--blue);color:#fff;border-radius:8px;display:inline-block;}
 .bag-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--ink);border-radius:10px;margin-bottom:6px;background:#fff;cursor:pointer;transition:background .15s;}
@@ -327,8 +332,10 @@ section{
 .kujira-img{width:52px;height:52px;object-fit:contain;flex-shrink:0;}
 .kujira-bubble{flex:1;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.5;}
 .bag-sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
+.bag-title-row{display:flex;align-items:center;gap:10px;}
 .bag-header-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
-.bag-header-hint{font-size:.7rem;font-weight:700;color:#c8146b;}
+.bag-header-btn-group{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.bag-header-hint{font-size:.68rem;font-weight:700;color:#c8146b;white-space:nowrap;}
 .bag-header-btn{background:var(--blue);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:900;font-size:.72rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);font-family:inherit;white-space:nowrap;}
 .bag-sticky-top{position:sticky;top:var(--nav-h,60px);z-index:50;background:var(--paper);padding-top:6px;padding-bottom:4px;border-bottom:3px solid var(--ink);margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
 #page-bag.bag-phase-out .bagdir-ret{display:none;}
@@ -1245,11 +1252,13 @@ section{
     <section class="bag-section">
       <div class="bag-sticky-top" id="bag-sticky-top">
         <div class="sec-head bag-sec-head">
-          <div><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
+          <div class="bag-title-row"><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
           <div class="bag-header-actions">
             <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
-            <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">🏠 ただいま</button>
-            <span class="bag-header-hint" id="btn-finish-homecoming-hint" style="display:none">家に着いたら押してね</span>
+            <div class="bag-header-btn-group">
+              <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">🏠 ただいま</button>
+              <span class="bag-header-hint" id="btn-finish-homecoming-hint" style="display:none">家に着いたら押してね</span>
+            </div>
           </div>
         </div>
 
@@ -1262,12 +1271,12 @@ section{
         <div class="bag-progress-box" id="bag-progress-dual">
           <div class="bag-prog-row bagdir-out"><span>行きの荷物<span class="bag-prog-complete" id="bag-prog-out-complete">COMPLETE</span></span><span id="bag-prog-out">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-out"><div id="bag-prog-out-fill"></div></div>
-          <div class="bag-prog-row bagdir-out bag-prog-sub"><span>出発前チェック</span><span id="bag-prog-pre-out">0 / 8</span></div>
+          <div class="bag-prog-row bagdir-out bag-prog-sub"><span>出発前チェック<span class="bag-prog-complete" id="bag-prog-pre-out-complete">COMPLETE</span><span class="bag-prog-secret-clear" id="bag-prog-pre-out-secret">⭐ SECRET CLEAR</span></span><span id="bag-prog-pre-out">0 / 8</span></div>
           <div class="bag-prog-bar bagdir-out bag-prog-sub-bar"><div id="bag-prog-pre-out-fill"></div></div>
 
           <div class="bag-prog-row bagdir-ret"><span>帰りの荷物<span class="bag-prog-complete" id="bag-prog-ret-complete">COMPLETE</span></span><span id="bag-prog-ret">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-ret"><div id="bag-prog-ret-fill"></div></div>
-          <div class="bag-prog-row bagdir-ret bag-prog-sub"><span>帰宅前チェック</span><span id="bag-prog-pre-ret">0 / 8</span></div>
+          <div class="bag-prog-row bagdir-ret bag-prog-sub"><span>帰宅前チェック<span class="bag-prog-complete" id="bag-prog-pre-ret-complete">COMPLETE</span><span class="bag-prog-secret-clear" id="bag-prog-pre-ret-secret">⭐ SECRET CLEAR</span></span><span id="bag-prog-pre-ret">0 / 8</span></div>
           <div class="bag-prog-bar bagdir-ret bag-prog-sub-bar"><div id="bag-prog-pre-ret-fill"></div></div>
         </div>
 
@@ -2454,6 +2463,7 @@ function bagRenderWhaleMessage(state){
   var btnHomeHint = document.getElementById('btn-finish-homecoming-hint');
   if (btnHomeHint) btnHomeHint.style.display = showHomeBtn ? 'inline' : 'none';
 }
+var bagSecretPrevCleared = {};
 function bagRender(){
   var state = bagGetState();
   bagSetCharacterImages();
@@ -2528,6 +2538,22 @@ function bagRender(){
     } else {
       if (secretLabel) secretLabel.textContent = '？？？？';
       if (secretIcon) secretIcon.textContent = '🔒';
+    }
+
+    fillEl && fillEl.classList.toggle('bag-complete', unlocked);
+    var completeBadge = document.getElementById(countElId + '-complete');
+    if (completeBadge) completeBadge.classList.toggle('show', unlocked);
+
+    var secretCleared = unlocked && !!state.predeparture[secretId];
+    var secretBadge = document.getElementById(countElId + '-secret');
+    if (secretBadge) secretBadge.classList.toggle('show', secretCleared);
+    if (secretRow) {
+      secretRow.classList.toggle('bag-item-cleared', secretCleared);
+      if (secretCleared && !bagSecretPrevCleared[secretId]) {
+        secretRow.classList.add('bag-item-shimmer');
+        setTimeout(function(){ secretRow.classList.remove('bag-item-shimmer'); }, 1000);
+      }
+      bagSecretPrevCleared[secretId] = secretCleared;
     }
   }
   renderPreList(BAG_PRE_OUT_IDS, BAG_PRE_OUT_SECRET, BAG_PRE_OUT_SECRET_TEXT, 'bag-prog-pre-out', 'bag-prog-pre-out-fill');
