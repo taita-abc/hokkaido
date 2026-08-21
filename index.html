@@ -298,7 +298,10 @@ section{
 .bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:7px 14px 10px;margin-bottom:8px;}
 .bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px;}
 .bag-prog-bar{height:14px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;}
-#bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
+#bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-out-fill,#bag-prog-pre-ret-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
+.bag-item-secret{border-style:dashed;}
+.bag-item-secret.bag-item-locked{opacity:.55;cursor:default;}
+.bag-item-secret:not(.bag-item-locked){border-color:#ff7ec2;background:#fff5fa;}
 #bag-prog-out-fill.bag-complete,#bag-prog-ret-fill.bag-complete{background:linear-gradient(90deg,#ff3d94,#c8146b);animation:bagCompletePulse .6s ease;}
 @keyframes bagCompletePulse{0%{filter:brightness(1)}40%{filter:brightness(1.6)}100%{filter:brightness(1)}}
 .bag-prog-complete{display:none;margin-left:6px;font-size:.68rem;color:#ff7ec2;font-weight:900;letter-spacing:.5px;vertical-align:middle;}
@@ -1242,7 +1245,7 @@ section{
           <div><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
           <div class="bag-header-actions">
             <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
-            <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
+            <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">🏠 ただいま</button>
           </div>
         </div>
 
@@ -1420,12 +1423,18 @@ section{
       </div>
 
       <div class="bag-tabpanel" id="bagtab-predeparture">
-        <div class="bag-progress-box">
-          <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre">0 / 8</span></div>
-          <div class="bag-prog-bar"><div id="bag-prog-pre-fill"></div></div>
+        <div class="bag-progress-box bagdir-out">
+          <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre-out">0 / 8</span></div>
+          <div class="bag-prog-bar"><div id="bag-prog-pre-out-fill"></div></div>
         </div>
-        <button class="bag-cat-checkall bag-cat-checkall-pre" onclick="bagCheckAllPre()">✅ まとめてチェック</button>
-        <div class="bag-cat-body-flat">
+        <div class="bag-progress-box bagdir-ret">
+          <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre-ret">0 / 8</span></div>
+          <div class="bag-prog-bar"><div id="bag-prog-pre-ret-fill"></div></div>
+        </div>
+        <button class="bag-cat-checkall bag-cat-checkall-pre bagdir-out" onclick="bagCheckAllPre('outbound')">✅ まとめてチェック</button>
+        <button class="bag-cat-checkall bag-cat-checkall-pre bagdir-ret" onclick="bagCheckAllPre('return')">✅ まとめてチェック</button>
+
+        <div class="bag-cat-body-flat bagdir-out">
         <div class="bag-item" id="bagrow-pre-d1" onclick="bagTogglePre('d1')"><span class="bag-check-icon" id="bagicon-pre-d1">⬜</span><span class="bag-item-label">戸締まり</span></div>
         <div class="bag-item" id="bagrow-pre-d2" onclick="bagTogglePre('d2')"><span class="bag-check-icon" id="bagicon-pre-d2">⬜</span><span class="bag-item-label">火の元確認</span></div>
         <div class="bag-item" id="bagrow-pre-d3" onclick="bagTogglePre('d3')"><span class="bag-check-icon" id="bagicon-pre-d3">⬜</span><span class="bag-item-label">電気・家電の確認</span></div>
@@ -1434,6 +1443,19 @@ section{
         <div class="bag-item" id="bagrow-pre-d6" onclick="bagTogglePre('d6')"><span class="bag-check-icon" id="bagicon-pre-d6">⬜</span><span class="bag-item-label">空港までの移動時間を確認</span></div>
         <div class="bag-item" id="bagrow-pre-d7" onclick="bagTogglePre('d7')"><span class="bag-check-icon" id="bagicon-pre-d7">⬜</span><span class="bag-item-label">搭乗時間を再確認</span></div>
         <div class="bag-item" id="bagrow-pre-d8" onclick="bagTogglePre('d8')"><span class="bag-check-icon" id="bagicon-pre-d8">⬜</span><span class="bag-item-label">荷物の重量・サイズを確認</span></div>
+        <div class="bag-item bag-item-secret" id="bagrow-pre-ds" onclick="bagTogglePre('ds')"><span class="bag-check-icon" id="bagicon-pre-ds">🔒</span><span class="bag-item-label" id="baglabel-pre-ds">？？？？</span></div>
+        </div>
+
+        <div class="bag-cat-body-flat bagdir-ret">
+        <div class="bag-item" id="bagrow-pre-r1" onclick="bagTogglePre('r1')"><span class="bag-check-icon" id="bagicon-pre-r1">⬜</span><span class="bag-item-label">忘れ物チェック（クローゼット・ベッド下・洗面所）</span></div>
+        <div class="bag-item" id="bagrow-pre-r2" onclick="bagTogglePre('r2')"><span class="bag-check-icon" id="bagicon-pre-r2">⬜</span><span class="bag-item-label">冷蔵庫の中身を確認（飲み物・お土産の食品など）</span></div>
+        <div class="bag-item" id="bagrow-pre-r3" onclick="bagTogglePre('r3')"><span class="bag-check-icon" id="bagicon-pre-r3">⬜</span><span class="bag-item-label">充電器・充電ケーブルの置き忘れ確認</span></div>
+        <div class="bag-item" id="bagrow-pre-r4" onclick="bagTogglePre('r4')"><span class="bag-check-icon" id="bagicon-pre-r4">⬜</span><span class="bag-item-label">貴重品（財布・スマホ・免許証）の最終確認</span></div>
+        <div class="bag-item" id="bagrow-pre-r5" onclick="bagTogglePre('r5')"><span class="bag-check-icon" id="bagicon-pre-r5">⬜</span><span class="bag-item-label">カードキーをフロントに返却</span></div>
+        <div class="bag-item" id="bagrow-pre-r6" onclick="bagTogglePre('r6')"><span class="bag-check-icon" id="bagicon-pre-r6">⬜</span><span class="bag-item-label">チェックアウト手続き（精算確認）</span></div>
+        <div class="bag-item" id="bagrow-pre-r7" onclick="bagTogglePre('r7')"><span class="bag-check-icon" id="bagicon-pre-r7">⬜</span><span class="bag-item-label">車への積み込み漏れ確認（お土産・スーツケース）</span></div>
+        <div class="bag-item" id="bagrow-pre-r8" onclick="bagTogglePre('r8')"><span class="bag-check-icon" id="bagicon-pre-r8">⬜</span><span class="bag-item-label">レンタカー返却時間・搭乗時間の再確認</span></div>
+        <div class="bag-item bag-item-secret" id="bagrow-pre-rs" onclick="bagTogglePre('rs')"><span class="bag-check-icon" id="bagicon-pre-rs">🔒</span><span class="bag-item-label" id="baglabel-pre-rs">？？？？</span></div>
         </div>
       </div>
 
@@ -2285,7 +2307,12 @@ var BAG_CATS = {
   p8: ['p8_1','p8_2','p8_3','p8_4'],
 };
 var BAG_DUAL_IDS = ['h1_1','h1_2','h1_3','h1_4','h1_5','h1_6','h2_1','h2_2','h2_3','h2_4','h2_5','h2_6','h3_1','h3_2','h3_3','h3_4','h3_5','h3_6','h3_7','h4_1','h4_2','h4_3','h4_4','h4_5','h4_6','h4_7','h4_8','p1_1','p2_1','p2_2','p2_3','p2_4','p2_5','p2_6','p3_1','p3_2','p3_3','p3_4','p3_5','p3_6','p4_1','p4_2','p4_3','p5_1','p5_2','p5_3','p5_4','p5_5','p5_6','p6_1','p6_2','p6_3','p6_4','p6_5','p6_6','p7_1','p7_2','p7_3','p7_4','p8_1','p8_2','p8_3','p8_4'];
-var BAG_PRE_IDS = ['d1','d2','d3','d4','d5','d6','d7','d8'];
+var BAG_PRE_OUT_IDS = ['d1','d2','d3','d4','d5','d6','d7','d8'];
+var BAG_PRE_OUT_SECRET = 'ds';
+var BAG_PRE_OUT_SECRET_TEXT = '旅の安全を願って、「いってきます」と言う';
+var BAG_PRE_RET_IDS = ['r1','r2','r3','r4','r5','r6','r7','r8'];
+var BAG_PRE_RET_SECRET = 'rs';
+var BAG_PRE_RET_SECRET_TEXT = '家に着くまで油断せず、最後まで笑顔で楽しむ';
 
 function bagGetState(){
   if (!APP_DATA.bag) APP_DATA.bag = {};
@@ -2318,11 +2345,12 @@ function bagCheckAllCategory(cat){
   gasSave();
   bagRender();
 }
-function bagCheckAllPre(){
+function bagCheckAllPre(dir){
   var state = bagGetState();
-  var allChecked = BAG_PRE_IDS.every(function(id){ return !!state.predeparture[id]; });
+  var ids = dir === 'return' ? BAG_PRE_RET_IDS : BAG_PRE_OUT_IDS;
+  var allChecked = ids.every(function(id){ return !!state.predeparture[id]; });
   var newVal = !allChecked;
-  BAG_PRE_IDS.forEach(function(id){ state.predeparture[id] = newVal; });
+  ids.forEach(function(id){ state.predeparture[id] = newVal; });
   gasSave();
   bagRender();
 }
@@ -2346,6 +2374,14 @@ function bagToggle(dir, id){
 }
 function bagTogglePre(id){
   var state = bagGetState();
+  if (id === BAG_PRE_OUT_SECRET) {
+    var outDone = BAG_PRE_OUT_IDS.every(function(i){ return !!state.predeparture[i]; });
+    if (!outDone) return;
+  }
+  if (id === BAG_PRE_RET_SECRET) {
+    var retDone = BAG_PRE_RET_IDS.every(function(i){ return !!state.predeparture[i]; });
+    if (!retDone) return;
+  }
   state.predeparture[id] = !state.predeparture[id];
   gasSave();
   bagRender();
@@ -2463,19 +2499,40 @@ function bagRender(){
     if (badge) badge.textContent = '行' + o + '/' + ids.length + ' 帰' + r + '/' + ids.length;
   });
 
-  // 出発前
-  var preChecked = 0;
-  BAG_PRE_IDS.forEach(function(id){
-    var icon = document.getElementById('bagicon-pre-' + id);
-    var on = !!state.predeparture[id];
-    if (icon) icon.textContent = on ? '✅' : '⬜';
-    if (on) preChecked++;
-  });
-  var preTotal = BAG_PRE_IDS.length;
-  var preEl = document.getElementById('bag-prog-pre');
-  if (preEl) preEl.textContent = preChecked + ' / ' + preTotal;
-  var preFill = document.getElementById('bag-prog-pre-fill');
-  if (preFill) preFill.style.width = (preTotal ? (preChecked / preTotal * 100) : 0) + '%';
+  // 出発前 / 帰宅前
+  function renderPreList(ids, secretId, secretText, countElId, fillElId){
+    var checked = 0;
+    ids.forEach(function(id){
+      var icon = document.getElementById('bagicon-pre-' + id);
+      var on = !!state.predeparture[id];
+      if (icon) icon.textContent = on ? '✅' : '⬜';
+      if (on) checked++;
+    });
+    var total = ids.length;
+    var countEl = document.getElementById(countElId);
+    if (countEl) countEl.textContent = checked + ' / ' + total;
+    var fillEl = document.getElementById(fillElId);
+    if (fillEl) fillEl.style.width = (total ? (checked / total * 100) : 0) + '%';
+
+    var unlocked = total > 0 && checked === total;
+    var secretIcon = document.getElementById('bagicon-pre-' + secretId);
+    var secretLabel = document.getElementById('baglabel-pre-' + secretId);
+    var secretRow = document.getElementById('bagrow-pre-' + secretId);
+    if (secretRow) secretRow.classList.toggle('bag-item-locked', !unlocked);
+    if (unlocked) {
+      if (secretLabel) secretLabel.textContent = secretText;
+      if (secretIcon) secretIcon.textContent = state.predeparture[secretId] ? '✅' : '⬜';
+    } else {
+      if (secretLabel) secretLabel.textContent = '？？？？';
+      if (secretIcon) secretIcon.textContent = '🔒';
+    }
+  }
+  renderPreList(BAG_PRE_OUT_IDS, BAG_PRE_OUT_SECRET, BAG_PRE_OUT_SECRET_TEXT, 'bag-prog-pre-out', 'bag-prog-pre-out-fill');
+  renderPreList(BAG_PRE_RET_IDS, BAG_PRE_RET_SECRET, BAG_PRE_RET_SECRET_TEXT, 'bag-prog-pre-ret', 'bag-prog-pre-ret-fill');
+
+  // 出発前/帰宅前タブのラベル切り替え
+  var preTabBtn = document.querySelector('.bag-tab[data-tab="predeparture"]');
+  if (preTabBtn) preTabBtn.textContent = state.returnStarted ? '🏠 帰宅前' : '🚪 出発前';
 
   bagRenderWhaleMessage(state);
 }
