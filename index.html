@@ -1889,14 +1889,12 @@ window.addEventListener("DOMContentLoaded", async function() {
 
 
 // ====== ホーム：生物1匹表示（ホームに戻るたびに切り替え） ======
-var _homeCreatureIndex = -1;
 function refreshHomeCreatures() {
   var grid = document.getElementById('home-creature-grid');
   if (!grid) return;
   var imgs = Array.from(document.querySelectorAll('#page-creatures .creature-img'));
   if (imgs.length === 0) return;
-  _homeCreatureIndex = (_homeCreatureIndex + 1) % imgs.length;
-  var pick = imgs[_homeCreatureIndex];
+  var pick = imgs[Math.floor(Math.random() * imgs.length)];
   grid.style.opacity = '0';
   setTimeout(function() {
     grid.innerHTML = '';
