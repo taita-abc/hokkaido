@@ -298,6 +298,8 @@ section{
 .bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:7px 14px 10px;margin-bottom:8px;}
 .bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px;}
 .bag-prog-bar{height:14px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;}
+.bag-prog-row.bag-prog-sub{font-size:.74rem;font-weight:700;opacity:.85;margin-top:6px;margin-bottom:4px;}
+.bag-prog-bar.bag-prog-sub-bar{height:8px;margin-bottom:2px;}
 #bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-out-fill,#bag-prog-pre-ret-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
 .bag-item-secret{border-style:dashed;}
 .bag-item-secret.bag-item-locked{opacity:.55;cursor:default;}
@@ -325,7 +327,8 @@ section{
 .kujira-img{width:52px;height:52px;object-fit:contain;flex-shrink:0;}
 .kujira-bubble{flex:1;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.5;}
 .bag-sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
-.bag-header-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.bag-header-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.bag-header-hint{font-size:.7rem;font-weight:700;color:#c8146b;}
 .bag-header-btn{background:var(--blue);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:900;font-size:.72rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);font-family:inherit;white-space:nowrap;}
 .bag-sticky-top{position:sticky;top:var(--nav-h,60px);z-index:50;background:var(--paper);padding-top:6px;padding-bottom:4px;border-bottom:3px solid var(--ink);margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
 #page-bag.bag-phase-out .bagdir-ret{display:none;}
@@ -1246,6 +1249,7 @@ section{
           <div class="bag-header-actions">
             <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
             <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">🏠 ただいま</button>
+            <span class="bag-header-hint" id="btn-finish-homecoming-hint" style="display:none">家に着いたら押してね</span>
           </div>
         </div>
 
@@ -1256,10 +1260,15 @@ section{
         </div>
 
         <div class="bag-progress-box" id="bag-progress-dual">
-          <div class="bag-prog-row bagdir-out"><span>行き<span class="bag-prog-complete" id="bag-prog-out-complete">COMPLETE</span></span><span id="bag-prog-out">0 / 63</span></div>
+          <div class="bag-prog-row bagdir-out"><span>行きの荷物<span class="bag-prog-complete" id="bag-prog-out-complete">COMPLETE</span></span><span id="bag-prog-out">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-out"><div id="bag-prog-out-fill"></div></div>
-          <div class="bag-prog-row bagdir-ret"><span>帰り<span class="bag-prog-complete" id="bag-prog-ret-complete">COMPLETE</span></span><span id="bag-prog-ret">0 / 63</span></div>
+          <div class="bag-prog-row bagdir-out bag-prog-sub"><span>出発前チェック</span><span id="bag-prog-pre-out">0 / 8</span></div>
+          <div class="bag-prog-bar bagdir-out bag-prog-sub-bar"><div id="bag-prog-pre-out-fill"></div></div>
+
+          <div class="bag-prog-row bagdir-ret"><span>帰りの荷物<span class="bag-prog-complete" id="bag-prog-ret-complete">COMPLETE</span></span><span id="bag-prog-ret">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-ret"><div id="bag-prog-ret-fill"></div></div>
+          <div class="bag-prog-row bagdir-ret bag-prog-sub"><span>帰宅前チェック</span><span id="bag-prog-pre-ret">0 / 8</span></div>
+          <div class="bag-prog-bar bagdir-ret bag-prog-sub-bar"><div id="bag-prog-pre-ret-fill"></div></div>
         </div>
 
         <div class="kujira-box">
@@ -1423,14 +1432,6 @@ section{
       </div>
 
       <div class="bag-tabpanel" id="bagtab-predeparture">
-        <div class="bag-progress-box bagdir-out">
-          <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre-out">0 / 8</span></div>
-          <div class="bag-prog-bar"><div id="bag-prog-pre-out-fill"></div></div>
-        </div>
-        <div class="bag-progress-box bagdir-ret">
-          <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre-ret">0 / 8</span></div>
-          <div class="bag-prog-bar"><div id="bag-prog-pre-ret-fill"></div></div>
-        </div>
         <button class="bag-cat-checkall bag-cat-checkall-pre bagdir-out" onclick="bagCheckAllPre('outbound')">✅ まとめてチェック</button>
         <button class="bag-cat-checkall bag-cat-checkall-pre bagdir-ret" onclick="bagCheckAllPre('return')">✅ まとめてチェック</button>
 
@@ -2450,6 +2451,8 @@ function bagRenderWhaleMessage(state){
   bubble.innerHTML = lines.join('<br>');
   if (btnReturn) btnReturn.style.display = showReturnBtn ? 'block' : 'none';
   if (btnHome) btnHome.style.display = showHomeBtn ? 'block' : 'none';
+  var btnHomeHint = document.getElementById('btn-finish-homecoming-hint');
+  if (btnHomeHint) btnHomeHint.style.display = showHomeBtn ? 'inline' : 'none';
 }
 function bagRender(){
   var state = bagGetState();
