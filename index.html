@@ -317,7 +317,16 @@ section{
 .kujira-box{display:flex;gap:10px;align-items:center;background:#e8f4fb;border:2px solid var(--blue);border-radius:12px;padding:10px 14px;margin-bottom:10px;}
 .kujira-img{width:52px;height:52px;object-fit:contain;flex-shrink:0;}
 .kujira-bubble{flex:1;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.5;}
-.kujira-actions{display:flex;justify-content:center;margin-bottom:16px;}
+.bag-sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;}
+.bag-header-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.bag-header-btn{background:var(--blue);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:900;font-size:.72rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);font-family:inherit;white-space:nowrap;}
+.bag-sticky-top{position:sticky;top:var(--nav-h,60px);z-index:50;background:var(--paper);padding-top:8px;padding-bottom:8px;border-bottom:3px solid var(--ink);margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
+#page-bag.bag-phase-out .bagdir-ret{display:none;}
+#page-bag.bag-phase-ret .bagdir-out{display:none;}
+#page-bag.bag-phase-out .bag-item2,#page-bag.bag-phase-out .bag-item2-head,
+#page-bag.bag-phase-ret .bag-item2,#page-bag.bag-phase-ret .bag-item2-head{grid-template-columns:1fr 44px;}
+.bag-cat-checkall{margin-left:auto;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:3px 10px;font-weight:900;font-size:.68rem;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.bag-cat-checkall-pre{display:block;margin:0 auto 12px;background:var(--blue);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 16px;font-weight:900;font-size:.78rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);font-family:inherit;}
 .bag-note-title{font-weight:900;font-size:.85rem;margin-bottom:6px;}
 .bag-note ul{margin:0;padding-left:1.1em;font-size:.8rem;line-height:1.6;}
 .bag-cat{margin-bottom:10px;}
@@ -1223,7 +1232,13 @@ section{
   <!-- バッグ -->
   <div class="page" id="page-bag">
     <section class="bag-section">
-      <div class="sec-head"><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
+      <div class="sec-head bag-sec-head">
+        <div><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
+        <div class="bag-header-actions">
+          <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
+          <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
+        </div>
+      </div>
 
       <div class="bag-tabs">
         <button class="bag-tab active" data-tab="carryon" onclick="bagSwitchTab('carryon')">👜 手荷物</button>
@@ -1231,23 +1246,73 @@ section{
         <button class="bag-tab" data-tab="predeparture" onclick="bagSwitchTab('predeparture')">🚪 出発前</button>
       </div>
 
-      <div class="bag-progress-box" id="bag-progress-dual">
-        <div class="bag-prog-row"><span>行き</span><span id="bag-prog-out">0 / 63</span></div>
-        <div class="bag-prog-bar"><div id="bag-prog-out-fill"></div></div>
-        <div class="bag-prog-row" style="margin-top:10px"><span>帰り</span><span id="bag-prog-ret">0 / 63</span></div>
-        <div class="bag-prog-bar"><div id="bag-prog-ret-fill"></div></div>
-      </div>
+      <div class="bag-sticky-top" id="bag-sticky-top">
+        <div class="bag-progress-box" id="bag-progress-dual">
+          <div class="bag-prog-row bagdir-out"><span>行き</span><span id="bag-prog-out">0 / 63</span></div>
+          <div class="bag-prog-bar bagdir-out"><div id="bag-prog-out-fill"></div></div>
+          <div class="bag-prog-row bagdir-ret" style="margin-top:10px"><span>帰り</span><span id="bag-prog-ret">0 / 63</span></div>
+          <div class="bag-prog-bar bagdir-ret"><div id="bag-prog-ret-fill"></div></div>
+        </div>
 
-      <div class="kujira-box">
-        <img class="kujira-img" id="kujira-img" alt="ザトウクジラ">
-        <div class="kujira-bubble" id="kujira-bubble">読み込み中…</div>
-      </div>
-      <div class="kujira-actions">
-        <button class="reset-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
-        <button class="reset-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
+        <div class="kujira-box">
+          <img class="kujira-img" id="kujira-img" alt="ザトウクジラ">
+          <div class="kujira-bubble" id="kujira-bubble">読み込み中…</div>
+        </div>
       </div>
 
       <div class="bag-tabpanel active" id="bagtab-carryon">
+      <div class="bag-cat">
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">📋 貴重品・必須書類</span> <span class="bag-cat-count" id="bagcat-h1"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('h1')">✅ まとめて</button></div>
+        <div class="bag-cat-body" style="display:none">
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-h1_1"><span class="bag-item-label">財布（現金・クレカ）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_1" onclick="bagToggle('outbound','h1_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_1" onclick="bagToggle('return','h1_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_2"><span class="bag-item-label">運転免許証</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_2" onclick="bagToggle('outbound','h1_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_2" onclick="bagToggle('return','h1_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_3"><span class="bag-item-label">スマートフォン</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_3" onclick="bagToggle('outbound','h1_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_3" onclick="bagToggle('return','h1_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_4"><span class="bag-item-label">航空券（予約QR/控え）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_4" onclick="bagToggle('outbound','h1_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_4" onclick="bagToggle('return','h1_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_5"><span class="bag-item-label">マイナンバーカード</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_5" onclick="bagToggle('outbound','h1_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_5" onclick="bagToggle('return','h1_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_6"><span class="bag-item-label">母子手帳</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_6" onclick="bagToggle('outbound','h1_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_6" onclick="bagToggle('return','h1_6')">⬜</span></div>
+        </div>
+      </div>
+      <div class="bag-cat">
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🔌 電子機器</span> <span class="bag-cat-count" id="bagcat-h2"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('h2')">✅ まとめて</button></div>
+        <div class="bag-cat-body" style="display:none">
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-h2_1"><span class="bag-item-label">充電器</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_1" onclick="bagToggle('outbound','h2_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_1" onclick="bagToggle('return','h2_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h2_2"><span class="bag-item-label">充電ケーブル</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_2" onclick="bagToggle('outbound','h2_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_2" onclick="bagToggle('return','h2_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h2_3"><span class="bag-item-label">He PRO（+ケーブル）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_3" onclick="bagToggle('outbound','h2_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_3" onclick="bagToggle('return','h2_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h2_4"><span class="bag-item-label">タブレット</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_4" onclick="bagToggle('outbound','h2_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_4" onclick="bagToggle('return','h2_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h2_5"><span class="bag-item-label">イヤホン（+分配器）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_5" onclick="bagToggle('outbound','h2_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_5" onclick="bagToggle('return','h2_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h2_6"><span class="bag-item-label">電動髭剃り</span><span class="bag-check2 bagdir-out" id="bagicon-out-h2_6" onclick="bagToggle('outbound','h2_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h2_6" onclick="bagToggle('return','h2_6')">⬜</span></div>
+        </div>
+      </div>
+      <div class="bag-cat">
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🧴 身の回り品</span> <span class="bag-cat-count" id="bagcat-h3"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('h3')">✅ まとめて</button></div>
+        <div class="bag-cat-body" style="display:none">
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-h3_1"><span class="bag-item-label">薬・常備薬・救急セット</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_1" onclick="bagToggle('outbound','h3_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_1" onclick="bagToggle('return','h3_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_2"><span class="bag-item-label">ティッシュ</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_2" onclick="bagToggle('outbound','h3_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_2" onclick="bagToggle('return','h3_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_3"><span class="bag-item-label">ハンカチ・タオル</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_3" onclick="bagToggle('outbound','h3_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_3" onclick="bagToggle('return','h3_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_4"><span class="bag-item-label">ボディシート</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_4" onclick="bagToggle('outbound','h3_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_4" onclick="bagToggle('return','h3_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_5"><span class="bag-item-label">エコバッグ</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_5" onclick="bagToggle('outbound','h3_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_5" onclick="bagToggle('return','h3_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_6"><span class="bag-item-label">羽織るもの</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_6" onclick="bagToggle('outbound','h3_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_6" onclick="bagToggle('return','h3_6')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h3_7"><span class="bag-item-label">飲み物</span><span class="bag-check2 bagdir-out" id="bagicon-out-h3_7" onclick="bagToggle('outbound','h3_7')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h3_7" onclick="bagToggle('return','h3_7')">⬜</span></div>
+        </div>
+      </div>
+      <div class="bag-cat">
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👶 子ども用</span> <span class="bag-cat-count" id="bagcat-h4"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('h4')">✅ まとめて</button></div>
+        <div class="bag-cat-body" style="display:none">
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-h4_1"><span class="bag-item-label">キリンのリュック</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_1" onclick="bagToggle('outbound','h4_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_1" onclick="bagToggle('return','h4_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_2"><span class="bag-item-label">ストローキャップ</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_2" onclick="bagToggle('outbound','h4_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_2" onclick="bagToggle('return','h4_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_3"><span class="bag-item-label">おやつ</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_3" onclick="bagToggle('outbound','h4_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_3" onclick="bagToggle('return','h4_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_4"><span class="bag-item-label">おむつセット</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_4" onclick="bagToggle('outbound','h4_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_4" onclick="bagToggle('return','h4_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_5"><span class="bag-item-label">髪ゴムセット</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_5" onclick="bagToggle('outbound','h4_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_5" onclick="bagToggle('return','h4_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_6"><span class="bag-item-label">子どもの着替え</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_6" onclick="bagToggle('outbound','h4_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_6" onclick="bagToggle('return','h4_6')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_7"><span class="bag-item-label">スリング(抱っこ紐）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_7" onclick="bagToggle('outbound','h4_7')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_7" onclick="bagToggle('return','h4_7')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h4_8"><span class="bag-item-label">ぬいぐるみ（小）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h4_8" onclick="bagToggle('outbound','h4_8')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h4_8" onclick="bagToggle('return','h4_8')">⬜</span></div>
+        </div>
+      </div>
+
         <div class="bag-note">
           <img class="bag-note-img" id="bagnote-bear-img" alt="ヒグマ">
           <div class="bag-note-bubble">
@@ -1260,142 +1325,91 @@ section{
             </ul>
           </div>
         </div>
-      <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">📋 貴重品・必須書類</span> <span class="bag-cat-count" id="bagcat-h1"></span></div>
-        <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-h1_1"><span class="bag-item-label">財布（現金・クレカ）</span><span class="bag-check2" id="bagicon-out-h1_1" onclick="bagToggle('outbound','h1_1')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_1" onclick="bagToggle('return','h1_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h1_2"><span class="bag-item-label">運転免許証</span><span class="bag-check2" id="bagicon-out-h1_2" onclick="bagToggle('outbound','h1_2')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_2" onclick="bagToggle('return','h1_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h1_3"><span class="bag-item-label">スマートフォン</span><span class="bag-check2" id="bagicon-out-h1_3" onclick="bagToggle('outbound','h1_3')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_3" onclick="bagToggle('return','h1_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h1_4"><span class="bag-item-label">航空券（予約QR/控え）</span><span class="bag-check2" id="bagicon-out-h1_4" onclick="bagToggle('outbound','h1_4')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_4" onclick="bagToggle('return','h1_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h1_5"><span class="bag-item-label">マイナンバーカード</span><span class="bag-check2" id="bagicon-out-h1_5" onclick="bagToggle('outbound','h1_5')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_5" onclick="bagToggle('return','h1_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h1_6"><span class="bag-item-label">母子手帳</span><span class="bag-check2" id="bagicon-out-h1_6" onclick="bagToggle('outbound','h1_6')">⬜</span><span class="bag-check2" id="bagicon-ret-h1_6" onclick="bagToggle('return','h1_6')">⬜</span></div>
-        </div>
-      </div>
-      <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🔌 電子機器</span> <span class="bag-cat-count" id="bagcat-h2"></span></div>
-        <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-h2_1"><span class="bag-item-label">充電器</span><span class="bag-check2" id="bagicon-out-h2_1" onclick="bagToggle('outbound','h2_1')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_1" onclick="bagToggle('return','h2_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h2_2"><span class="bag-item-label">充電ケーブル</span><span class="bag-check2" id="bagicon-out-h2_2" onclick="bagToggle('outbound','h2_2')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_2" onclick="bagToggle('return','h2_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h2_3"><span class="bag-item-label">He PRO（+ケーブル）</span><span class="bag-check2" id="bagicon-out-h2_3" onclick="bagToggle('outbound','h2_3')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_3" onclick="bagToggle('return','h2_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h2_4"><span class="bag-item-label">タブレット</span><span class="bag-check2" id="bagicon-out-h2_4" onclick="bagToggle('outbound','h2_4')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_4" onclick="bagToggle('return','h2_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h2_5"><span class="bag-item-label">イヤホン（+分配器）</span><span class="bag-check2" id="bagicon-out-h2_5" onclick="bagToggle('outbound','h2_5')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_5" onclick="bagToggle('return','h2_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h2_6"><span class="bag-item-label">電動髭剃り</span><span class="bag-check2" id="bagicon-out-h2_6" onclick="bagToggle('outbound','h2_6')">⬜</span><span class="bag-check2" id="bagicon-ret-h2_6" onclick="bagToggle('return','h2_6')">⬜</span></div>
-        </div>
-      </div>
-      <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🧴 身の回り品</span> <span class="bag-cat-count" id="bagcat-h3"></span></div>
-        <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-h3_1"><span class="bag-item-label">薬・常備薬・救急セット</span><span class="bag-check2" id="bagicon-out-h3_1" onclick="bagToggle('outbound','h3_1')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_1" onclick="bagToggle('return','h3_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_2"><span class="bag-item-label">ティッシュ</span><span class="bag-check2" id="bagicon-out-h3_2" onclick="bagToggle('outbound','h3_2')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_2" onclick="bagToggle('return','h3_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_3"><span class="bag-item-label">ハンカチ・タオル</span><span class="bag-check2" id="bagicon-out-h3_3" onclick="bagToggle('outbound','h3_3')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_3" onclick="bagToggle('return','h3_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_4"><span class="bag-item-label">ボディシート</span><span class="bag-check2" id="bagicon-out-h3_4" onclick="bagToggle('outbound','h3_4')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_4" onclick="bagToggle('return','h3_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_5"><span class="bag-item-label">エコバッグ</span><span class="bag-check2" id="bagicon-out-h3_5" onclick="bagToggle('outbound','h3_5')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_5" onclick="bagToggle('return','h3_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_6"><span class="bag-item-label">羽織るもの</span><span class="bag-check2" id="bagicon-out-h3_6" onclick="bagToggle('outbound','h3_6')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_6" onclick="bagToggle('return','h3_6')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h3_7"><span class="bag-item-label">飲み物</span><span class="bag-check2" id="bagicon-out-h3_7" onclick="bagToggle('outbound','h3_7')">⬜</span><span class="bag-check2" id="bagicon-ret-h3_7" onclick="bagToggle('return','h3_7')">⬜</span></div>
-        </div>
-      </div>
-      <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👶 子ども用</span> <span class="bag-cat-count" id="bagcat-h4"></span></div>
-        <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-h4_1"><span class="bag-item-label">キリンのリュック</span><span class="bag-check2" id="bagicon-out-h4_1" onclick="bagToggle('outbound','h4_1')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_1" onclick="bagToggle('return','h4_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_2"><span class="bag-item-label">ストローキャップ</span><span class="bag-check2" id="bagicon-out-h4_2" onclick="bagToggle('outbound','h4_2')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_2" onclick="bagToggle('return','h4_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_3"><span class="bag-item-label">おやつ</span><span class="bag-check2" id="bagicon-out-h4_3" onclick="bagToggle('outbound','h4_3')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_3" onclick="bagToggle('return','h4_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_4"><span class="bag-item-label">おむつセット</span><span class="bag-check2" id="bagicon-out-h4_4" onclick="bagToggle('outbound','h4_4')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_4" onclick="bagToggle('return','h4_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_5"><span class="bag-item-label">髪ゴムセット</span><span class="bag-check2" id="bagicon-out-h4_5" onclick="bagToggle('outbound','h4_5')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_5" onclick="bagToggle('return','h4_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_6"><span class="bag-item-label">子どもの着替え</span><span class="bag-check2" id="bagicon-out-h4_6" onclick="bagToggle('outbound','h4_6')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_6" onclick="bagToggle('return','h4_6')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_7"><span class="bag-item-label">スリング(抱っこ紐）</span><span class="bag-check2" id="bagicon-out-h4_7" onclick="bagToggle('outbound','h4_7')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_7" onclick="bagToggle('return','h4_7')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-h4_8"><span class="bag-item-label">ぬいぐるみ（リュックに付けられるもの）</span><span class="bag-check2" id="bagicon-out-h4_8" onclick="bagToggle('outbound','h4_8')">⬜</span><span class="bag-check2" id="bagicon-ret-h4_8" onclick="bagToggle('return','h4_8')">⬜</span></div>
-        </div>
-      </div>
       </div>
 
       <div class="bag-tabpanel" id="bagtab-checked">
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">☂️ 大人用（共通）</span> <span class="bag-cat-count" id="bagcat-p1"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">☂️ 大人用（共通）</span> <span class="bag-cat-count" id="bagcat-p1"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p1')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p1_1"><span class="bag-item-label">日傘・折畳み傘</span><span class="bag-check2" id="bagicon-out-p1_1" onclick="bagToggle('outbound','p1_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p1_1" onclick="bagToggle('return','p1_1')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p1_1"><span class="bag-item-label">日傘・折畳み傘</span><span class="bag-check2 bagdir-out" id="bagicon-out-p1_1" onclick="bagToggle('outbound','p1_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p1_1" onclick="bagToggle('return','p1_1')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👨 父</span> <span class="bag-cat-count" id="bagcat-p2"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👨 父</span> <span class="bag-cat-count" id="bagcat-p2"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p2')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p2_1"><span class="bag-item-label">着替え</span><span class="bag-check2" id="bagicon-out-p2_1" onclick="bagToggle('outbound','p2_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_1" onclick="bagToggle('return','p2_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p2_2"><span class="bag-item-label">下着</span><span class="bag-check2" id="bagicon-out-p2_2" onclick="bagToggle('outbound','p2_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_2" onclick="bagToggle('return','p2_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p2_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2" id="bagicon-out-p2_3" onclick="bagToggle('outbound','p2_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_3" onclick="bagToggle('return','p2_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p2_4"><span class="bag-item-label">上着</span><span class="bag-check2" id="bagicon-out-p2_4" onclick="bagToggle('outbound','p2_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_4" onclick="bagToggle('return','p2_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p2_5"><span class="bag-item-label">靴下</span><span class="bag-check2" id="bagicon-out-p2_5" onclick="bagToggle('outbound','p2_5')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_5" onclick="bagToggle('return','p2_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p2_6"><span class="bag-item-label">大量のタオル</span><span class="bag-check2" id="bagicon-out-p2_6" onclick="bagToggle('outbound','p2_6')">⬜</span><span class="bag-check2" id="bagicon-ret-p2_6" onclick="bagToggle('return','p2_6')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p2_1"><span class="bag-item-label">着替え</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_1" onclick="bagToggle('outbound','p2_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_1" onclick="bagToggle('return','p2_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p2_2"><span class="bag-item-label">下着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_2" onclick="bagToggle('outbound','p2_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_2" onclick="bagToggle('return','p2_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p2_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_3" onclick="bagToggle('outbound','p2_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_3" onclick="bagToggle('return','p2_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p2_4"><span class="bag-item-label">上着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_4" onclick="bagToggle('outbound','p2_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_4" onclick="bagToggle('return','p2_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p2_5"><span class="bag-item-label">靴下</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_5" onclick="bagToggle('outbound','p2_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_5" onclick="bagToggle('return','p2_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p2_6"><span class="bag-item-label">大量のタオル</span><span class="bag-check2 bagdir-out" id="bagicon-out-p2_6" onclick="bagToggle('outbound','p2_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p2_6" onclick="bagToggle('return','p2_6')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👩 母</span> <span class="bag-cat-count" id="bagcat-p3"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👩 母</span> <span class="bag-cat-count" id="bagcat-p3"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p3')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p3_1"><span class="bag-item-label">着替え</span><span class="bag-check2" id="bagicon-out-p3_1" onclick="bagToggle('outbound','p3_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_1" onclick="bagToggle('return','p3_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p3_2"><span class="bag-item-label">下着</span><span class="bag-check2" id="bagicon-out-p3_2" onclick="bagToggle('outbound','p3_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_2" onclick="bagToggle('return','p3_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p3_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2" id="bagicon-out-p3_3" onclick="bagToggle('outbound','p3_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_3" onclick="bagToggle('return','p3_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p3_4"><span class="bag-item-label">上着</span><span class="bag-check2" id="bagicon-out-p3_4" onclick="bagToggle('outbound','p3_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_4" onclick="bagToggle('return','p3_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p3_5"><span class="bag-item-label">靴下</span><span class="bag-check2" id="bagicon-out-p3_5" onclick="bagToggle('outbound','p3_5')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_5" onclick="bagToggle('return','p3_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p3_6"><span class="bag-item-label">帽子</span><span class="bag-check2" id="bagicon-out-p3_6" onclick="bagToggle('outbound','p3_6')">⬜</span><span class="bag-check2" id="bagicon-ret-p3_6" onclick="bagToggle('return','p3_6')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p3_1"><span class="bag-item-label">着替え</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_1" onclick="bagToggle('outbound','p3_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_1" onclick="bagToggle('return','p3_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p3_2"><span class="bag-item-label">下着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_2" onclick="bagToggle('outbound','p3_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_2" onclick="bagToggle('return','p3_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p3_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_3" onclick="bagToggle('outbound','p3_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_3" onclick="bagToggle('return','p3_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p3_4"><span class="bag-item-label">上着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_4" onclick="bagToggle('outbound','p3_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_4" onclick="bagToggle('return','p3_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p3_5"><span class="bag-item-label">靴下</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_5" onclick="bagToggle('outbound','p3_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_5" onclick="bagToggle('return','p3_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p3_6"><span class="bag-item-label">帽子</span><span class="bag-check2 bagdir-out" id="bagicon-out-p3_6" onclick="bagToggle('outbound','p3_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p3_6" onclick="bagToggle('return','p3_6')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👧 子ども用（共通）</span> <span class="bag-cat-count" id="bagcat-p4"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👧 子ども用（共通）</span> <span class="bag-cat-count" id="bagcat-p4"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p4')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p4_1"><span class="bag-item-label">おむつ</span><span class="bag-check2" id="bagicon-out-p4_1" onclick="bagToggle('outbound','p4_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p4_1" onclick="bagToggle('return','p4_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p4_2"><span class="bag-item-label">おしりふき</span><span class="bag-check2" id="bagicon-out-p4_2" onclick="bagToggle('outbound','p4_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p4_2" onclick="bagToggle('return','p4_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p4_3"><span class="bag-item-label">ゴミ袋</span><span class="bag-check2" id="bagicon-out-p4_3" onclick="bagToggle('outbound','p4_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p4_3" onclick="bagToggle('return','p4_3')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p4_1"><span class="bag-item-label">おむつ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p4_1" onclick="bagToggle('outbound','p4_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p4_1" onclick="bagToggle('return','p4_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p4_2"><span class="bag-item-label">おしりふき</span><span class="bag-check2 bagdir-out" id="bagicon-out-p4_2" onclick="bagToggle('outbound','p4_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p4_2" onclick="bagToggle('return','p4_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p4_3"><span class="bag-item-label">ゴミ袋</span><span class="bag-check2 bagdir-out" id="bagicon-out-p4_3" onclick="bagToggle('outbound','p4_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p4_3" onclick="bagToggle('return','p4_3')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👧 瑚遥</span> <span class="bag-cat-count" id="bagcat-p5"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👧 瑚遥</span> <span class="bag-cat-count" id="bagcat-p5"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p5')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p5_1"><span class="bag-item-label">着替え</span><span class="bag-check2" id="bagicon-out-p5_1" onclick="bagToggle('outbound','p5_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_1" onclick="bagToggle('return','p5_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p5_2"><span class="bag-item-label">下着</span><span class="bag-check2" id="bagicon-out-p5_2" onclick="bagToggle('outbound','p5_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_2" onclick="bagToggle('return','p5_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p5_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2" id="bagicon-out-p5_3" onclick="bagToggle('outbound','p5_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_3" onclick="bagToggle('return','p5_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p5_4"><span class="bag-item-label">靴下</span><span class="bag-check2" id="bagicon-out-p5_4" onclick="bagToggle('outbound','p5_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_4" onclick="bagToggle('return','p5_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p5_5"><span class="bag-item-label">予備の服</span><span class="bag-check2" id="bagicon-out-p5_5" onclick="bagToggle('outbound','p5_5')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_5" onclick="bagToggle('return','p5_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p5_6"><span class="bag-item-label">帽子</span><span class="bag-check2" id="bagicon-out-p5_6" onclick="bagToggle('outbound','p5_6')">⬜</span><span class="bag-check2" id="bagicon-ret-p5_6" onclick="bagToggle('return','p5_6')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p5_1"><span class="bag-item-label">着替え</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_1" onclick="bagToggle('outbound','p5_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_1" onclick="bagToggle('return','p5_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p5_2"><span class="bag-item-label">下着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_2" onclick="bagToggle('outbound','p5_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_2" onclick="bagToggle('return','p5_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p5_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_3" onclick="bagToggle('outbound','p5_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_3" onclick="bagToggle('return','p5_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p5_4"><span class="bag-item-label">靴下</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_4" onclick="bagToggle('outbound','p5_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_4" onclick="bagToggle('return','p5_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p5_5"><span class="bag-item-label">予備の服</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_5" onclick="bagToggle('outbound','p5_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_5" onclick="bagToggle('return','p5_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p5_6"><span class="bag-item-label">帽子</span><span class="bag-check2 bagdir-out" id="bagicon-out-p5_6" onclick="bagToggle('outbound','p5_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p5_6" onclick="bagToggle('return','p5_6')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👦 智也</span> <span class="bag-cat-count" id="bagcat-p6"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">👦 智也</span> <span class="bag-cat-count" id="bagcat-p6"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p6')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p6_1"><span class="bag-item-label">着替え</span><span class="bag-check2" id="bagicon-out-p6_1" onclick="bagToggle('outbound','p6_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_1" onclick="bagToggle('return','p6_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p6_2"><span class="bag-item-label">下着</span><span class="bag-check2" id="bagicon-out-p6_2" onclick="bagToggle('outbound','p6_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_2" onclick="bagToggle('return','p6_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p6_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2" id="bagicon-out-p6_3" onclick="bagToggle('outbound','p6_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_3" onclick="bagToggle('return','p6_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p6_4"><span class="bag-item-label">靴下</span><span class="bag-check2" id="bagicon-out-p6_4" onclick="bagToggle('outbound','p6_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_4" onclick="bagToggle('return','p6_4')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p6_5"><span class="bag-item-label">予備の服！下着！</span><span class="bag-check2" id="bagicon-out-p6_5" onclick="bagToggle('outbound','p6_5')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_5" onclick="bagToggle('return','p6_5')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p6_6"><span class="bag-item-label">帽子</span><span class="bag-check2" id="bagicon-out-p6_6" onclick="bagToggle('outbound','p6_6')">⬜</span><span class="bag-check2" id="bagicon-ret-p6_6" onclick="bagToggle('return','p6_6')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p6_1"><span class="bag-item-label">着替え</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_1" onclick="bagToggle('outbound','p6_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_1" onclick="bagToggle('return','p6_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p6_2"><span class="bag-item-label">下着</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_2" onclick="bagToggle('outbound','p6_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_2" onclick="bagToggle('return','p6_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p6_3"><span class="bag-item-label">パジャマ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_3" onclick="bagToggle('outbound','p6_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_3" onclick="bagToggle('return','p6_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p6_4"><span class="bag-item-label">靴下</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_4" onclick="bagToggle('outbound','p6_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_4" onclick="bagToggle('return','p6_4')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p6_5"><span class="bag-item-label">予備の服！下着！</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_5" onclick="bagToggle('outbound','p6_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_5" onclick="bagToggle('return','p6_5')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p6_6"><span class="bag-item-label">帽子</span><span class="bag-check2 bagdir-out" id="bagicon-out-p6_6" onclick="bagToggle('outbound','p6_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p6_6" onclick="bagToggle('return','p6_6')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🛁 洗面・身支度</span> <span class="bag-cat-count" id="bagcat-p7"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🛁 洗面・身支度</span> <span class="bag-cat-count" id="bagcat-p7"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p7')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p7_1"><span class="bag-item-label">歯ブラシ</span><span class="bag-check2" id="bagicon-out-p7_1" onclick="bagToggle('outbound','p7_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p7_1" onclick="bagToggle('return','p7_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p7_2"><span class="bag-item-label">洗面用品</span><span class="bag-check2" id="bagicon-out-p7_2" onclick="bagToggle('outbound','p7_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p7_2" onclick="bagToggle('return','p7_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p7_3"><span class="bag-item-label">シャンプー・ボディソープなど</span><span class="bag-check2" id="bagicon-out-p7_3" onclick="bagToggle('outbound','p7_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p7_3" onclick="bagToggle('return','p7_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p7_4"><span class="bag-item-label">化粧品・スキンケア用品</span><span class="bag-check2" id="bagicon-out-p7_4" onclick="bagToggle('outbound','p7_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p7_4" onclick="bagToggle('return','p7_4')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p7_1"><span class="bag-item-label">歯ブラシ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p7_1" onclick="bagToggle('outbound','p7_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p7_1" onclick="bagToggle('return','p7_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p7_2"><span class="bag-item-label">洗面用品</span><span class="bag-check2 bagdir-out" id="bagicon-out-p7_2" onclick="bagToggle('outbound','p7_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p7_2" onclick="bagToggle('return','p7_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p7_3"><span class="bag-item-label">シャンプー・ボディソープなど</span><span class="bag-check2 bagdir-out" id="bagicon-out-p7_3" onclick="bagToggle('outbound','p7_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p7_3" onclick="bagToggle('return','p7_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p7_4"><span class="bag-item-label">化粧品・スキンケア用品</span><span class="bag-check2 bagdir-out" id="bagicon-out-p7_4" onclick="bagToggle('outbound','p7_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p7_4" onclick="bagToggle('return','p7_4')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
-        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🧺 その他・あると便利</span> <span class="bag-cat-count" id="bagcat-p8"></span></div>
+        <div class="bag-cat-hd" onclick="bagToggleCat(this)"><span class="bag-cat-arrow">▶</span> <span class="bag-cat-name">🧺 その他・あると便利</span> <span class="bag-cat-count" id="bagcat-p8"></span><button class="bag-cat-checkall" onclick="event.stopPropagation();bagCheckAllCategory('p8')">✅ まとめて</button></div>
         <div class="bag-cat-body" style="display:none">
-        <div class="bag-item2 bag-item2-head"><span></span><span>行き</span><span>帰り</span></div>
-        <div class="bag-item2" id="bagrow2-p8_1"><span class="bag-item-label">ビニール袋</span><span class="bag-check2" id="bagicon-out-p8_1" onclick="bagToggle('outbound','p8_1')">⬜</span><span class="bag-check2" id="bagicon-ret-p8_1" onclick="bagToggle('return','p8_1')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p8_2"><span class="bag-item-label">ジッパーバッグ</span><span class="bag-check2" id="bagicon-out-p8_2" onclick="bagToggle('outbound','p8_2')">⬜</span><span class="bag-check2" id="bagicon-ret-p8_2" onclick="bagToggle('return','p8_2')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p8_3"><span class="bag-item-label">汚れ物を入れる袋</span><span class="bag-check2" id="bagicon-out-p8_3" onclick="bagToggle('outbound','p8_3')">⬜</span><span class="bag-check2" id="bagicon-ret-p8_3" onclick="bagToggle('return','p8_3')">⬜</span></div>
-        <div class="bag-item2" id="bagrow2-p8_4"><span class="bag-item-label">お土産を入れるスペースを確保</span><span class="bag-check2" id="bagicon-out-p8_4" onclick="bagToggle('outbound','p8_4')">⬜</span><span class="bag-check2" id="bagicon-ret-p8_4" onclick="bagToggle('return','p8_4')">⬜</span></div>
+        <div class="bag-item2 bag-item2-head"><span></span><span class="bagdir-out">行き</span><span class="bagdir-ret">帰り</span></div>
+        <div class="bag-item2" id="bagrow2-p8_1"><span class="bag-item-label">ビニール袋</span><span class="bag-check2 bagdir-out" id="bagicon-out-p8_1" onclick="bagToggle('outbound','p8_1')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p8_1" onclick="bagToggle('return','p8_1')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p8_2"><span class="bag-item-label">ジッパーバッグ</span><span class="bag-check2 bagdir-out" id="bagicon-out-p8_2" onclick="bagToggle('outbound','p8_2')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p8_2" onclick="bagToggle('return','p8_2')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p8_3"><span class="bag-item-label">汚れ物を入れる袋</span><span class="bag-check2 bagdir-out" id="bagicon-out-p8_3" onclick="bagToggle('outbound','p8_3')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p8_3" onclick="bagToggle('return','p8_3')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-p8_4"><span class="bag-item-label">お土産を入れるスペースを確保</span><span class="bag-check2 bagdir-out" id="bagicon-out-p8_4" onclick="bagToggle('outbound','p8_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-p8_4" onclick="bagToggle('return','p8_4')">⬜</span></div>
         </div>
       </div>
       </div>
@@ -1405,6 +1419,7 @@ section{
           <div class="bag-prog-row"><span>チェック済み</span><span id="bag-prog-pre">0 / 8</span></div>
           <div class="bag-prog-bar"><div id="bag-prog-pre-fill"></div></div>
         </div>
+        <button class="bag-cat-checkall bag-cat-checkall-pre" onclick="bagCheckAllPre()">✅ まとめてチェック</button>
         <div class="bag-cat-body-flat">
         <div class="bag-item" id="bagrow-pre-d1" onclick="bagTogglePre('d1')"><span class="bag-check-icon" id="bagicon-pre-d1">⬜</span><span class="bag-item-label">戸締まり</span></div>
         <div class="bag-item" id="bagrow-pre-d2" onclick="bagTogglePre('d2')"><span class="bag-check-icon" id="bagicon-pre-d2">⬜</span><span class="bag-item-label">火の元確認</span></div>
@@ -1897,13 +1912,19 @@ async function gasMigrateBadgesToLocal() {
     }
   }
 }
+function bagUpdateNavHeight(){
+  var navEl = document.querySelector('nav');
+  if (navEl) document.documentElement.style.setProperty('--nav-h', navEl.offsetHeight + 'px');
+}
 window.addEventListener("DOMContentLoaded", async function() {
   await openDB();
   await gasEnsureLoaded();
   await gasMigrateBadgesToLocal();
   await updateBadgeDisplay();
   refreshHomeCreatures();
+  bagUpdateNavHeight();
 });
+window.addEventListener('resize', bagUpdateNavHeight);
 
 
 // ====== ホーム：生物1匹表示（ホームに戻るたびに切り替え） ======
@@ -2282,6 +2303,19 @@ function bagFindCategory(id){
   }
   return null;
 }
+function bagCheckAllCategory(cat){
+  var state = bagGetState();
+  var dir = state.returnStarted ? 'return' : 'outbound';
+  (BAG_CATS[cat] || []).forEach(function(id){ state[dir][id] = true; });
+  gasSave();
+  bagRender();
+}
+function bagCheckAllPre(){
+  var state = bagGetState();
+  BAG_PRE_IDS.forEach(function(id){ state.predeparture[id] = true; });
+  gasSave();
+  bagRender();
+}
 function bagStartReturn(){
   var state = bagGetState();
   state.returnStarted = true;
@@ -2353,7 +2387,8 @@ function bagRenderWhaleMessage(state){
       showHomeBtn = true;
     } else {
       var catR = bagFindCategory(retMissing[0]);
-      lines = ['帰り、あと' + retMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catR] || '') + '」から見てみよう！'];
+      var tagR = catR && catR.charAt(0) === 'h' ? '手荷物' : '預け荷物';
+      lines = [tagR + '、帰り あと' + retMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catR] || '') + '」から見てみよう！'];
     }
   } else {
     if (outMissing.length === 0) {
@@ -2361,7 +2396,8 @@ function bagRenderWhaleMessage(state){
       showReturnBtn = true;
     } else {
       var catO = bagFindCategory(outMissing[0]);
-      lines = ['行き、あと' + outMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catO] || '') + '」から見てみよう！'];
+      var tagO = catO && catO.charAt(0) === 'h' ? '手荷物' : '預け荷物';
+      lines = [tagO + '、行き あと' + outMissing.length + '個だよ！まずは「' + (BAG_CAT_NAMES[catO] || '') + '」から見てみよう！'];
     }
   }
 
@@ -2372,6 +2408,11 @@ function bagRenderWhaleMessage(state){
 function bagRender(){
   var state = bagGetState();
   bagSetCharacterImages();
+  var pageBag = document.getElementById('page-bag');
+  if (pageBag) {
+    pageBag.classList.remove('bag-phase-out', 'bag-phase-ret');
+    pageBag.classList.add(state.returnStarted ? 'bag-phase-ret' : 'bag-phase-out');
+  }
 
   // 手荷物・預け荷物（行き/帰り）
   var outChecked = 0, retChecked = 0;
