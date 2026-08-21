@@ -295,8 +295,8 @@ section{
 /* BADGES */
 .progress-box{background:var(--ink);color:white;border-radius:14px;padding:14px;margin-bottom:14px;}
 /* ===== 持ち物バッグ ===== */
-.bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:14px;margin-bottom:14px;}
-.bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:8px;}
+.bag-progress-box{background:var(--ink);color:white;border-radius:14px;padding:12px 14px;margin-bottom:8px;}
+.bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px;}
 .bag-prog-bar{height:14px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;}
 #bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
 .bag-category{margin-bottom:6px;}
@@ -306,7 +306,7 @@ section{
 .bag-check-icon{font-size:1.05rem;flex-shrink:0;width:20px;text-align:center;}
 .bag-item-label{font-size:.85rem;font-weight:700;color:var(--ink);}
 .bag-item.bag-checked .bag-item-label{text-decoration:line-through;color:#8a8a8a;}
-.bag-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.bag-tabs{display:flex;gap:6px;margin-bottom:8px;}
 .bag-tab{flex:1;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:8px 6px;font-weight:900;font-size:.78rem;cursor:pointer;font-family:inherit;color:var(--ink);opacity:.55;}
 .bag-tab.active{opacity:1;background:var(--blue);color:#fff;}
 .bag-tabpanel{display:none;}
@@ -314,13 +314,13 @@ section{
 .bag-note{background:#fff7e0;border:2px solid var(--gold);border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;}
 .bag-note-img{width:48px;height:48px;object-fit:contain;flex-shrink:0;}
 .bag-note-bubble{flex:1;position:relative;}
-.kujira-box{display:flex;gap:10px;align-items:center;background:#e8f4fb;border:2px solid var(--blue);border-radius:12px;padding:10px 14px;margin-bottom:10px;}
+.kujira-box{display:flex;gap:10px;align-items:center;background:#e8f4fb;border:2px solid var(--blue);border-radius:12px;padding:8px 14px;margin-bottom:0;}
 .kujira-img{width:52px;height:52px;object-fit:contain;flex-shrink:0;}
 .kujira-bubble{flex:1;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.5;}
-.bag-sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;}
+.bag-sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;}
 .bag-header-actions{display:flex;gap:6px;flex-wrap:wrap;}
 .bag-header-btn{background:var(--blue);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:900;font-size:.72rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);font-family:inherit;white-space:nowrap;}
-.bag-sticky-top{position:sticky;top:var(--nav-h,60px);z-index:50;background:var(--paper);padding-top:8px;padding-bottom:8px;border-bottom:3px solid var(--ink);margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
+.bag-sticky-top{position:sticky;top:var(--nav-h,60px);z-index:50;background:var(--paper);padding-top:6px;padding-bottom:4px;border-bottom:3px solid var(--ink);margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;}
 #page-bag.bag-phase-out .bagdir-ret{display:none;}
 #page-bag.bag-phase-ret .bagdir-out{display:none;}
 #page-bag.bag-phase-out .bag-item2,#page-bag.bag-phase-out .bag-item2-head,
@@ -330,6 +330,7 @@ section{
 .bag-note-title{font-weight:900;font-size:.85rem;margin-bottom:6px;}
 .bag-note ul{margin:0;padding-left:1.1em;font-size:.8rem;line-height:1.6;}
 .bag-cat{margin-bottom:10px;}
+.bag-tabpanel>.bag-cat:first-child{margin-top:8px;}
 .bag-cat-hd{display:flex;align-items:center;gap:6px;font-weight:900;font-size:.88rem;padding:9px 12px;background:var(--blue);color:#fff;border-radius:10px;cursor:pointer;}
 .bag-cat-name{flex:1;}
 .bag-cat-count{font-size:.7rem;font-weight:700;opacity:.9;white-space:nowrap;}
@@ -1232,21 +1233,21 @@ section{
   <!-- バッグ -->
   <div class="page" id="page-bag">
     <section class="bag-section">
-      <div class="sec-head bag-sec-head">
-        <div><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
-        <div class="bag-header-actions">
-          <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
-          <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
-        </div>
-      </div>
-
-      <div class="bag-tabs">
-        <button class="bag-tab active" data-tab="carryon" onclick="bagSwitchTab('carryon')">👜 手荷物</button>
-        <button class="bag-tab" data-tab="checked" onclick="bagSwitchTab('checked')">🧳 預け荷物</button>
-        <button class="bag-tab" data-tab="predeparture" onclick="bagSwitchTab('predeparture')">🚪 出発前</button>
-      </div>
-
       <div class="bag-sticky-top" id="bag-sticky-top">
+        <div class="sec-head bag-sec-head">
+          <div><span class="sec-label">PACKING</span><h2>🎒 バッグ</h2></div>
+          <div class="bag-header-actions">
+            <button class="bag-header-btn" id="btn-start-return" onclick="bagStartReturn()" style="display:none">🏠 帰りの準備を始める</button>
+            <button class="bag-header-btn" id="btn-finish-homecoming" onclick="bagFinishHomecoming()" style="display:none">✅ 帰宅完了</button>
+          </div>
+        </div>
+
+        <div class="bag-tabs">
+          <button class="bag-tab active" data-tab="carryon" onclick="bagSwitchTab('carryon')">👜 手荷物</button>
+          <button class="bag-tab" data-tab="checked" onclick="bagSwitchTab('checked')">🧳 預け荷物</button>
+          <button class="bag-tab" data-tab="predeparture" onclick="bagSwitchTab('predeparture')">🚪 出発前</button>
+        </div>
+
         <div class="bag-progress-box" id="bag-progress-dual">
           <div class="bag-prog-row bagdir-out"><span>行き</span><span id="bag-prog-out">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-out"><div id="bag-prog-out-fill"></div></div>
