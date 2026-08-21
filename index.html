@@ -299,6 +299,10 @@ section{
 .bag-prog-row{display:flex;justify-content:space-between;font-weight:900;margin-bottom:6px;}
 .bag-prog-bar{height:14px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden;}
 #bag-prog-fill,#bag-prog-out-fill,#bag-prog-ret-fill,#bag-prog-pre-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffad57);transition:width .3s ease;}
+#bag-prog-out-fill.bag-complete,#bag-prog-ret-fill.bag-complete{background:linear-gradient(90deg,#ff3d94,#c8146b);animation:bagCompletePulse .6s ease;}
+@keyframes bagCompletePulse{0%{filter:brightness(1)}40%{filter:brightness(1.6)}100%{filter:brightness(1)}}
+.bag-prog-complete{display:none;margin-left:6px;font-size:.68rem;color:#ff7ec2;font-weight:900;letter-spacing:.5px;vertical-align:middle;}
+.bag-prog-complete.show{display:inline-block;}
 .bag-category{margin-bottom:6px;}
 .bag-cat-head{font-weight:900;font-size:.9rem;margin:14px 0 8px;padding:6px 12px;background:var(--blue);color:#fff;border-radius:8px;display:inline-block;}
 .bag-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid var(--ink);border-radius:10px;margin-bottom:6px;background:#fff;cursor:pointer;transition:background .15s;}
@@ -1249,9 +1253,9 @@ section{
         </div>
 
         <div class="bag-progress-box" id="bag-progress-dual">
-          <div class="bag-prog-row bagdir-out"><span>行き</span><span id="bag-prog-out">0 / 63</span></div>
+          <div class="bag-prog-row bagdir-out"><span>行き<span class="bag-prog-complete" id="bag-prog-out-complete">COMPLETE</span></span><span id="bag-prog-out">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-out"><div id="bag-prog-out-fill"></div></div>
-          <div class="bag-prog-row bagdir-ret" style="margin-top:10px"><span>帰り</span><span id="bag-prog-ret">0 / 63</span></div>
+          <div class="bag-prog-row bagdir-ret"><span>帰り<span class="bag-prog-complete" id="bag-prog-ret-complete">COMPLETE</span></span><span id="bag-prog-ret">0 / 63</span></div>
           <div class="bag-prog-bar bagdir-ret"><div id="bag-prog-ret-fill"></div></div>
         </div>
 
@@ -2441,6 +2445,14 @@ function bagRender(){
   var retFill = document.getElementById('bag-prog-ret-fill');
   if (outFill) outFill.style.width = (outTotal ? (outChecked / outTotal * 100) : 0) + '%';
   if (retFill) retFill.style.width = (outTotal ? (retChecked / outTotal * 100) : 0) + '%';
+  var outComplete = outTotal > 0 && outChecked === outTotal;
+  var retComplete = outTotal > 0 && retChecked === outTotal;
+  if (outFill) outFill.classList.toggle('bag-complete', outComplete);
+  if (retFill) retFill.classList.toggle('bag-complete', retComplete);
+  var outBadge = document.getElementById('bag-prog-out-complete');
+  var retBadge = document.getElementById('bag-prog-ret-complete');
+  if (outBadge) outBadge.classList.toggle('show', outComplete);
+  if (retBadge) retBadge.classList.toggle('show', retComplete);
 
   // カテゴリごとの件数バッジ（行/帰）
   Object.keys(BAG_CATS).forEach(function(cat){
