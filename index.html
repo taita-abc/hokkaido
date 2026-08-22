@@ -788,7 +788,7 @@ section{
           <div class="sche-ev-body">
             <span class="sche-must">必須</span><br><div class="sche-ev-title">🚗 レンタカー 受け取り</div>
             <div class="sche-ev-sub">ホンダレンタリース北海道 ／ フリードHV・禁煙・CS×2</div>
-            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>予約番号：101827498</li><li>車種：フリードハイブリッド（禁煙・チャイルドシート×2付き）</li><li>店舗：新千歳空港ラベンダー店（北海道千歳市柏台南2丁目1-6）</li><li>電話：011-241-4500</li></ul><br><a class="sche-link" href="https://www.tabirai.net/car/hokkaido/company/honda_hokkaido/branch/?PID=2620" target="_blank">ホンダレンタリース北海道</a></div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>予約番号：101827498</li><li>車種：フリードハイブリッド（禁煙・チャイルドシート×2付き）</li><li>店舗：新千歳空港ラベンダー店（北海道千歳市柏台南2丁目1-6）</li><li>電話：011-241-4500</li><li>営業時間：9:00〜18:00（この時間内での出発・返却が原則）</li><li>運転免許証：運転する人全員分を持参（その場でコピーを取られます）</li><li>支払い：原則クレジットカードのみ（現金希望の場合は本人確認書類が別途必要）</li><li>出発前に外装・タイヤのチェックシートを一緒に確認</li><li>カーナビの案内はあくまで参考。実際の標識・交通規制を優先すること</li><li>車検証入れの外側に、緊急連絡先とナビでの返却店舗設定方法のメモあり（出発前に見ておくと安心）</li></ul><br><a class="sche-link" href="https://www.tabirai.net/car/hokkaido/company/honda_hokkaido/branch/?PID=2620" target="_blank">ホンダレンタリース北海道</a></div>
           </div>
         </div>
         <div class="sche-ev">
@@ -966,7 +966,7 @@ section{
           <div class="sche-ev-body">
             <span class="sche-must">必須</span><br><div class="sche-ev-title">🚗 レンタカー返却</div>
             <div class="sche-ev-sub">ホンダレンタリース北海道 新千歳空港ラベンダー店</div>
-            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>返却後：送迎バスで空港へ（約7分）</li><li>⚠️ 出発2時間前（15:45）までの返却を推奨</li><li>電話：011-241-4500（SKY0794便名を伝える）</li></ul></div>
+            <button class="sche-toggle" onclick="scheToggle(this)">▶ くわしく見る</button><div class="sche-detail" style="display:none"><ul><li>返却後：送迎バスで空港へ（約7分）</li><li>⚠️ 出発2時間前（15:45）までの返却を推奨</li><li>電話：011-241-4500（SKY0794便名を伝える）</li><li>燃料：満タンにして返却（給油レシートを提示）</li><li>返却は新千歳空港ラベンダー店のみ。空港敷地内の他店舗では返却不可</li><li>超過料金：30分ごとに1,500円（連絡なしの無断超過は3,000円）</li><li>もし駐車違反の標章が付いていたら、返却までに警察で反則金を納付し、証明書を提示すること</li></ul></div>
           </div>
         </div>
         <div class="sche-ev">
@@ -1228,6 +1228,7 @@ section{
         <div class="bag-item2" id="bagrow2-h1_4"><span class="bag-item-label">航空券（予約QR/控え）</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_4" onclick="bagToggle('outbound','h1_4')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_4" onclick="bagToggle('return','h1_4')">⬜</span></div>
         <div class="bag-item2" id="bagrow2-h1_5"><span class="bag-item-label">マイナンバーカード</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_5" onclick="bagToggle('outbound','h1_5')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_5" onclick="bagToggle('return','h1_5')">⬜</span></div>
         <div class="bag-item2" id="bagrow2-h1_6"><span class="bag-item-label">母子手帳</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_6" onclick="bagToggle('outbound','h1_6')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_6" onclick="bagToggle('return','h1_6')">⬜</span></div>
+        <div class="bag-item2" id="bagrow2-h1_7"><span class="bag-item-label">ETCカード</span><span class="bag-check2 bagdir-out" id="bagicon-out-h1_7" onclick="bagToggle('outbound','h1_7')">⬜</span><span class="bag-check2 bagdir-ret" id="bagicon-ret-h1_7" onclick="bagToggle('return','h1_7')">⬜</span></div>
         </div>
       </div>
       <div class="bag-cat">
@@ -2343,7 +2344,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 // ====== 持ち物バッグ（家族間共有） ======
 var BAG_CATS = {
-  h1: ['h1_1','h1_2','h1_3','h1_4','h1_5','h1_6'],
+  h1: ['h1_1','h1_2','h1_3','h1_4','h1_5','h1_6','h1_7'],
   h2: ['h2_1','h2_2','h2_3','h2_4','h2_5','h2_6'],
   h3: ['h3_1','h3_2','h3_3','h3_4','h3_5','h3_6','h3_7'],
   h4: ['h4_1','h4_2','h4_3','h4_4','h4_5','h4_6','h4_7','h4_8'],
@@ -2356,7 +2357,7 @@ var BAG_CATS = {
   p7: ['p7_1','p7_2','p7_3','p7_4'],
   p8: ['p8_1','p8_2','p8_3','p8_4'],
 };
-var BAG_DUAL_IDS = ['h1_1','h1_2','h1_3','h1_4','h1_5','h1_6','h2_1','h2_2','h2_3','h2_4','h2_5','h2_6','h3_1','h3_2','h3_3','h3_4','h3_5','h3_6','h3_7','h4_1','h4_2','h4_3','h4_4','h4_5','h4_6','h4_7','h4_8','p1_1','p2_1','p2_2','p2_3','p2_4','p2_5','p2_6','p3_1','p3_2','p3_3','p3_4','p3_5','p3_6','p4_1','p4_2','p4_3','p5_1','p5_2','p5_3','p5_4','p5_5','p5_6','p6_1','p6_2','p6_3','p6_4','p6_5','p6_6','p7_1','p7_2','p7_3','p7_4','p8_1','p8_2','p8_3','p8_4'];
+var BAG_DUAL_IDS = ['h1_1','h1_2','h1_3','h1_4','h1_5','h1_6','h1_7','h2_1','h2_2','h2_3','h2_4','h2_5','h2_6','h3_1','h3_2','h3_3','h3_4','h3_5','h3_6','h3_7','h4_1','h4_2','h4_3','h4_4','h4_5','h4_6','h4_7','h4_8','p1_1','p2_1','p2_2','p2_3','p2_4','p2_5','p2_6','p3_1','p3_2','p3_3','p3_4','p3_5','p3_6','p4_1','p4_2','p4_3','p5_1','p5_2','p5_3','p5_4','p5_5','p5_6','p6_1','p6_2','p6_3','p6_4','p6_5','p6_6','p7_1','p7_2','p7_3','p7_4','p8_1','p8_2','p8_3','p8_4'];
 var BAG_PRE_OUT_IDS = ['d1','d2','d3','d4','d5','d6','d7','d8'];
 var BAG_PRE_OUT_SECRET = 'ds';
 var BAG_PRE_OUT_SECRET_TEXT = '旅の安全を願って、「いってきます」と言う';
