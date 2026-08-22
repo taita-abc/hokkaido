@@ -698,7 +698,7 @@ section{
         <div id="home-creature-grid" class="home-creature-grid" onclick="refreshHomeCreatures()" title="タップで更新"></div>
         <div>
           <b>及川家遠征隊</b>
-          <p>おかえり！ここは及川家遠征隊の北海道旅行完全攻略ガイドだよ。まずは旅程とバッジケースを確認しよう！</p>
+          <p></p>
         </div>
       </div>
       <div class="tile-grid">
@@ -1859,7 +1859,7 @@ showPage = function(id) {
   _origShowPage(id);
   var headerEl = document.querySelector('header');
   if (headerEl) headerEl.style.display = (id === 'home') ? '' : 'none';
-  if (id === "home") refreshHomeCreatures();
+  if (id === "home") refreshHomeCreatures(true);
   if (id === "trainers") updateBadgeDisplay();
   if (id === "bag") bagRender();
   if (id === "report") loadReport();
@@ -1983,7 +1983,7 @@ window.addEventListener("DOMContentLoaded", async function() {
   await gasEnsureLoaded();
   await gasMigrateBadgesToLocal();
   await updateBadgeDisplay();
-  refreshHomeCreatures();
+  refreshHomeCreatures(true);
   bagUpdateNavHeight();
 });
 window.addEventListener('resize', bagUpdateNavHeight);
@@ -2062,14 +2062,13 @@ var CREATURE_LINES = {
     'みんな、腹は減ってないか？無理せず楽しんで行けよ。'
   ]
 };
-function refreshHomeCreatures() {
+function refreshHomeCreatures(instant) {
   var grid = document.getElementById('home-creature-grid');
   if (!grid) return;
   var imgs = Array.from(document.querySelectorAll('#page-creatures .creature-img'));
   if (imgs.length === 0) return;
   var pick = imgs[Math.floor(Math.random() * imgs.length)];
-  grid.style.opacity = '0';
-  setTimeout(function() {
+  var apply = function() {
     grid.innerHTML = '';
     var el = document.createElement('img');
     el.src = pick.src;
@@ -2082,7 +2081,15 @@ function refreshHomeCreatures() {
     if (speechP && lines && lines.length) {
       speechP.textContent = lines[Math.floor(Math.random() * lines.length)];
     }
-  }, 200);
+  };
+  if (instant) {
+    grid.style.transition = 'none';
+    grid.style.opacity = '1';
+    apply();
+  } else {
+    grid.style.opacity = '0';
+    setTimeout(apply, 200);
+  }
 }
 
 // ====== お土産ショップ ======
