@@ -177,13 +177,32 @@ section{
 }
 .polaroid{
   background:#fff;padding:14px 14px 12px;box-shadow:0 8px 22px rgba(0,0,0,.4);
-  border-radius:2px;transform:rotate(-1.2deg);
+  border-radius:2px;transform:rotate(-1.2deg);position:relative;
 }
+.polaroid-photo-wrap{position:relative;}
 .polaroid img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#eee;}
 .polaroid-caption{
   font-family:'Yomogi',cursive;font-size:1.15rem;color:#333;text-align:center;
-  padding:12px 4px 4px;min-height:1.4em;line-height:1.4;word-break:break-word;
+  padding:12px 20px 4px;min-height:1.4em;line-height:1.4;overflow:hidden;
 }
+.photo-pos-controls{position:absolute;inset:0;pointer-events:none;}
+.pos-btn{
+  position:absolute;width:38px;height:38px;border-radius:50%;
+  background:rgba(0,0,0,.5);color:#fff;border:2px solid rgba(255,255,255,.8);
+  font-size:.95rem;cursor:pointer;pointer-events:all;display:flex;
+  align-items:center;justify-content:center;padding:0;
+}
+.pos-up{top:8px;left:50%;transform:translateX(-50%);}
+.pos-down{bottom:8px;left:50%;transform:translateX(-50%);}
+.pos-left{left:8px;top:50%;transform:translateY(-50%);}
+.pos-right{right:8px;top:50%;transform:translateY(-50%);}
+.polaroid-tools{position:absolute;bottom:10px;right:12px;gap:6px;}
+.polaroid-tool-btn{
+  background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.15);border-radius:50%;
+  width:26px;height:26px;font-size:.78rem;cursor:pointer;color:#666;
+  display:flex;align-items:center;justify-content:center;padding:0;line-height:1;
+}
+.polaroid-tool-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 .slot-thumb{cursor:pointer;}
 .album-card img{cursor:pointer;}
 .hokkaido-shape{
@@ -1741,8 +1760,8 @@ async function onBadgePhoto(event, bid) {
   var comment = prompt("一言コメント（空白でもOK）") || "";
   var prev = await dbGet("badge_photos", bid);
   var wasEarned = !!(prev && prev.photo);
-  await dbPut("badge_photos", { id: bid, photo: photo, timestamp: new Date().toISOString(), comment: comment });
-  updateReportSlot(bid, photo, comment);
+  await dbPut("badge_photos", { id: bid, photo: photo, timestamp: new Date().toISOString(), comment: comment, pos: { x: 50, y: 50 } });
+  updateReportSlot(bid, photo, comment, { x: 50, y: 50 });
   await updateBadgeDisplay();
   showToast("バッジを解除しました！🏅");
   if (!wasEarned) {
@@ -1759,14 +1778,14 @@ async function onBadgePhoto(event, bid) {
   // 家族間共有：Googleドライブへアップロードして保存
   gasUploadPhoto(photo, "badge", "badge_" + bid + "_" + Date.now() + ".jpg").then(function (res) {
     if (res && res.ok) {
-      APP_DATA.badges[bid] = { url: res.url, timestamp: new Date().toISOString(), comment: comment };
+      APP_DATA.badges[bid] = { url: res.url, timestamp: new Date().toISOString(), comment: comment, pos: { x: 50, y: 50 } };
       gasSave();
     }
   }).catch(function (err) { console.error("バッジ写真の共有アップロードに失敗", err); });
 }
 
 // ====== レポートスロット更新 ======
-function updateReportSlot(bid, photo, comment) {
+function updateReportSlot(bid, photo, comment, pos) {
   var slot = document.getElementById("rslot-" + bid);
   var thumb = document.getElementById("rthumb-" + bid);
   if (!slot || !thumb) return;
@@ -1774,11 +1793,15 @@ function updateReportSlot(bid, photo, comment) {
   if (photo) {
     thumb.src = photo;
     thumb.dataset.comment = comment || "";
+    thumb.dataset.posX = pos && pos.x != null ? pos.x : 50;
+    thumb.dataset.posY = pos && pos.y != null ? pos.y : 50;
     slot.classList.add("earned");
     if (btn) btn.textContent = "📷 写真を変更";
   } else {
     thumb.src = "";
     thumb.dataset.comment = "";
+    thumb.dataset.posX = "50";
+    thumb.dataset.posY = "50";
     slot.classList.remove("earned");
     if (btn) btn.textContent = "📷 写真を追加";
   }
@@ -1787,7 +1810,7 @@ function updateReportSlot(bid, photo, comment) {
 async function deleteBadgePhoto(bid) {
   if (!confirm("このバッジ写真を削除しますか？\nバッジも未取得に戻ります。")) return;
   await dbDelete("badge_photos", bid);
-  updateReportSlot(bid, null, null);
+  updateReportSlot(bid, null, null, null);
   await updateBadgeDisplay();
   showToast("バッジ写真を削除しました");
   var all = await dbGetAll("badge_photos");
@@ -1806,7 +1829,7 @@ async function loadReport() {
   for (var i = 0; i < BADGES.length; i++) {
     var b = BADGES[i];
     var rec = await dbGet("badge_photos", b.id);
-    updateReportSlot(b.id, rec ? rec.photo : null, rec ? rec.comment : null);
+    updateReportSlot(b.id, rec ? rec.photo : null, rec ? rec.comment : null, rec ? rec.pos : null);
   }
   renderAlbum();
 }
@@ -1826,7 +1849,7 @@ async function onAlbumPhoto(event) {
   try {
     var res = await gasUploadPhoto(photo, "report", "album_" + entryId + ".jpg");
     if (res && res.ok) {
-      APP_DATA.album.push({ id: entryId, url: res.url, comment: comment, timestamp: new Date().toISOString() });
+      APP_DATA.album.push({ id: entryId, url: res.url, comment: comment, timestamp: new Date().toISOString(), pos: { x: 50, y: 50 } });
       gasSave();
       renderAlbum();
       showToast("写真を追加しました 📷");
@@ -1865,7 +1888,10 @@ function renderAlbum() {
     var safeComment = (item.comment || "（コメントなし）").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     var jsComment = escJs(item.comment || "");
     var jsUrl = escJs(item.url);
-    card.innerHTML = '<img src="' + item.url + '" alt="album" onclick="openPhotoPopup(\'' + jsUrl + '\',\'' + jsComment + '\', this)">'
+    var posX = item.pos && item.pos.x != null ? item.pos.x : 50;
+    var posY = item.pos && item.pos.y != null ? item.pos.y : 50;
+    var metaJson = escJs(JSON.stringify({ kind: "album", id: item.id, comment: item.comment || "", pos: { x: posX, y: posY } }));
+    card.innerHTML = '<img src="' + item.url + '" alt="album" onclick="openPhotoPopup(\'' + jsUrl + '\',\'' + jsComment + '\', this, JSON.parse(\'' + metaJson + '\'))">'
       + '<div class="album-card-body">'
       + '<button class="album-card-del" onclick="deleteAlbumPhoto(\'' + item.id + '\')">&#x2715;</button>'
       + '<div class="album-card-comment">' + safeComment + '</div>'
@@ -1928,15 +1954,43 @@ function closeMapSpot(){
 }
 
 // ====== 写真ポラロイドポップアップ ======
-function openPhotoPopup(src, caption, pinEl){
+var currentPhotoMeta = null;
+var photoPosState = { x: 50, y: 50 };
+
+function fitCaptionText(el){
+  if (!el) return;
+  var maxSize = 1.15, minSize = 0.75;
+  el.style.whiteSpace = 'nowrap';
+  el.style.fontSize = maxSize + 'rem';
+  var size = maxSize;
+  while (el.scrollWidth > el.clientWidth && size > minSize) {
+    size -= 0.05;
+    el.style.fontSize = size.toFixed(2) + 'rem';
+  }
+  if (el.scrollWidth > el.clientWidth) {
+    el.style.whiteSpace = 'normal';
+  }
+}
+
+function openPhotoPopup(src, caption, pinEl, meta){
   if (!src) return;
   var img = document.getElementById('photo-popup-img');
   var capEl = document.getElementById('photo-popup-caption');
   var popup = document.getElementById('photo-popup');
   var backdrop = document.getElementById('photo-popup-backdrop');
+  var tools = document.getElementById('polaroid-tools');
+  var posControls = document.getElementById('photo-pos-controls');
+  var posBtn = document.getElementById('btn-adjust-pos');
   if (!img || !popup || !backdrop) return;
+  currentPhotoMeta = meta || null;
+  photoPosState = (meta && meta.pos) ? { x: meta.pos.x, y: meta.pos.y } : { x: 50, y: 50 };
   img.src = src;
+  img.style.objectPosition = photoPosState.x + '% ' + photoPosState.y + '%';
   capEl.textContent = caption || '';
+  fitCaptionText(capEl);
+  if (posControls) posControls.style.display = 'none';
+  if (posBtn) posBtn.classList.remove('active');
+  if (tools) tools.style.display = currentPhotoMeta ? 'flex' : 'none';
   backdrop.classList.add('show');
   popup.classList.remove('show');
   popup.style.transformOrigin = '50% 50%';
@@ -1950,17 +2004,91 @@ function openPhotoPopup(src, caption, pinEl){
       var originX = pinX - naturalLeft;
       var originY = pinY - naturalTop;
       popup.style.transformOrigin = originX + 'px ' + originY + 'px';
-      requestAnimationFrame(function(){ popup.classList.add('show'); });
+      requestAnimationFrame(function(){ popup.classList.add('show'); fitCaptionText(capEl); });
     });
   } else {
-    requestAnimationFrame(function(){ popup.classList.add('show'); });
+    requestAnimationFrame(function(){ popup.classList.add('show'); fitCaptionText(capEl); });
   }
 }
 function closePhotoPopup(){
   var popup = document.getElementById('photo-popup');
   var backdrop = document.getElementById('photo-popup-backdrop');
+  var posControls = document.getElementById('photo-pos-controls');
+  var posBtn = document.getElementById('btn-adjust-pos');
   if (popup) popup.classList.remove('show');
   if (backdrop) backdrop.classList.remove('show');
+  if (posControls) posControls.style.display = 'none';
+  if (posBtn) posBtn.classList.remove('active');
+}
+function movePhotoPos(dx, dy){
+  var step = 10;
+  photoPosState.x = Math.max(0, Math.min(100, photoPosState.x + dx * step));
+  photoPosState.y = Math.max(0, Math.min(100, photoPosState.y + dy * step));
+  var img = document.getElementById('photo-popup-img');
+  if (img) img.style.objectPosition = photoPosState.x + '% ' + photoPosState.y + '%';
+}
+function togglePositionAdjust(){
+  var controls = document.getElementById('photo-pos-controls');
+  var btn = document.getElementById('btn-adjust-pos');
+  if (!controls || !btn || !currentPhotoMeta) return;
+  var isActive = controls.style.display === 'flex';
+  if (isActive) {
+    controls.style.display = 'none';
+    btn.classList.remove('active');
+    savePhotoPosition();
+  } else {
+    controls.style.display = 'flex';
+    btn.classList.add('active');
+  }
+}
+async function savePhotoPosition(){
+  if (!currentPhotoMeta) return;
+  var pos = { x: photoPosState.x, y: photoPosState.y };
+  if (currentPhotoMeta.kind === 'badge') {
+    var bid = currentPhotoMeta.id;
+    var rec = await dbGet('badge_photos', bid);
+    if (rec) {
+      rec.pos = pos;
+      await dbPut('badge_photos', rec);
+      var thumb = document.getElementById('rthumb-' + bid);
+      if (thumb) { thumb.dataset.posX = pos.x; thumb.dataset.posY = pos.y; }
+      if (APP_DATA.badges[bid]) { APP_DATA.badges[bid].pos = pos; gasSave(); }
+    }
+  } else if (currentPhotoMeta.kind === 'album') {
+    var item = (APP_DATA.album || []).find(function(it){ return it.id === currentPhotoMeta.id; });
+    if (item) { item.pos = pos; gasSave(); }
+  }
+  currentPhotoMeta.pos = pos;
+  showToast('位置を保存しました');
+}
+async function editPhotoComment(){
+  if (!currentPhotoMeta) return;
+  var capEl = document.getElementById('photo-popup-caption');
+  var newComment = prompt('コメントを編集', currentPhotoMeta.comment || '');
+  if (newComment === null) return;
+  currentPhotoMeta.comment = newComment;
+  if (currentPhotoMeta.kind === 'badge') {
+    var bid = currentPhotoMeta.id;
+    var rec = await dbGet('badge_photos', bid);
+    if (rec) {
+      rec.comment = newComment;
+      await dbPut('badge_photos', rec);
+      var thumb = document.getElementById('rthumb-' + bid);
+      if (thumb) thumb.dataset.comment = newComment;
+      if (APP_DATA.badges[bid]) { APP_DATA.badges[bid].comment = newComment; gasSave(); }
+    }
+    capEl.textContent = newComment.trim() ? newComment : (currentPhotoMeta.badgeName || '');
+  } else if (currentPhotoMeta.kind === 'album') {
+    var item = (APP_DATA.album || []).find(function(it){ return it.id === currentPhotoMeta.id; });
+    if (item) {
+      item.comment = newComment;
+      gasSave();
+      renderAlbum();
+    }
+    capEl.textContent = newComment.trim() ? newComment : '（コメントなし）';
+  }
+  fitCaptionText(capEl);
+  showToast('コメントを更新しました');
 }
 function openReportBadgePhoto(bid, imgEl){
   if (!imgEl || !imgEl.getAttribute('src')) return;
@@ -1969,7 +2097,11 @@ function openReportBadgePhoto(bid, imgEl){
   var badgeName = nameEl ? nameEl.textContent : '';
   var comment = imgEl.dataset.comment;
   var caption = comment && comment.trim() ? comment : badgeName;
-  openPhotoPopup(imgEl.src, caption, imgEl);
+  var meta = {
+    kind: 'badge', id: bid, comment: comment || '', badgeName: badgeName,
+    pos: { x: parseFloat(imgEl.dataset.posX) || 50, y: parseFloat(imgEl.dataset.posY) || 50 }
+  };
+  openPhotoPopup(imgEl.src, caption, imgEl, meta);
 }
 
 // ====== Toast & 初期化 ======
@@ -2850,8 +2982,20 @@ function scheToggle(btn) {
   <div class="photo-popup" id="photo-popup">
     <button class="photo-popup-close" onclick="closePhotoPopup()">&#x2715;</button>
     <div class="polaroid">
-      <img id="photo-popup-img" src="" alt="">
+      <div class="polaroid-photo-wrap">
+        <img id="photo-popup-img" src="" alt="">
+        <div class="photo-pos-controls" id="photo-pos-controls" style="display:none">
+          <button class="pos-btn pos-up" onclick="movePhotoPos(0,-1)">&#x25B2;</button>
+          <button class="pos-btn pos-left" onclick="movePhotoPos(-1,0)">&#x25C0;</button>
+          <button class="pos-btn pos-right" onclick="movePhotoPos(1,0)">&#x25B6;</button>
+          <button class="pos-btn pos-down" onclick="movePhotoPos(0,1)">&#x25BC;</button>
+        </div>
+      </div>
       <div class="polaroid-caption" id="photo-popup-caption"></div>
+      <div class="polaroid-tools" id="polaroid-tools" style="display:none">
+        <button class="polaroid-tool-btn" onclick="editPhotoComment()" title="コメントを編集">&#x270F;&#xFE0F;</button>
+        <button class="polaroid-tool-btn" id="btn-adjust-pos" onclick="togglePositionAdjust()" title="切り取り位置を調整">&#x2921;</button>
+      </div>
     </div>
   </div>
 
