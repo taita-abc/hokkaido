@@ -1868,7 +1868,7 @@ function deleteAlbumPhoto(id) {
   renderAlbum();
 }
 function escJs(s){
-  return (s || "").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n");
+  return (s || "").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n").replace(/"/g,"&quot;");
 }
 function renderAlbum() {
   var items = APP_DATA.album || [];
