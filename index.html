@@ -642,6 +642,16 @@ section{
 .om-qty-badge{background:#c0392b;color:#fff;font-size:9px;padding:1px 4px;border-radius:2px;margin-left:3px}
 .om-scroll-hint{text-align:center;color:#2060c8;font-size:14px;padding:1px;background:#f0e8c8;border-top:1px solid #c8b870;flex-shrink:0}
 #om-desc-box{background:#c8e890;padding:10px 12px;display:flex;gap:10px;min-height:100px;border-top:3px solid #222}
+#om-cart-box{background:#fffdf2;border-top:3px solid #222;padding:10px 12px 14px}
+#om-cart-hd{font-weight:900;font-size:.95rem;margin-bottom:8px;color:var(--ink)}
+#om-cart-empty{display:none;font-size:.82rem;color:#888;text-align:center;padding:10px 0}
+.om-cart-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed #ccc}
+.om-cart-row:last-child{border-bottom:none}
+.om-cart-name{flex:1;font-size:.85rem;font-weight:700;color:var(--ink);word-break:break-word}
+.om-cart-qty{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.om-qty-btn.small{width:24px;height:24px;font-size:14px}
+.om-cart-qty span{font-size:.82rem;font-weight:700;min-width:1.2em;text-align:center}
+.om-cart-subtotal{font-size:.82rem;font-weight:900;color:#2060c8;flex-shrink:0;min-width:4.2em;text-align:right}
 #om-desc-icon{width:40px;height:40px;border:3px solid #222;border-radius:2px;flex-shrink:0;margin-top:2px}
 #om-desc-right{flex:1;overflow:hidden}
 #om-desc-name{font-size:16px;font-weight:500;font-family:monospace;color:#222;margin-bottom:2px}
@@ -2300,6 +2310,7 @@ async function initOmiyage() {
   var budgetInput = document.getElementById('om-budget-input');
   if (budgetInput) budgetInput.value = APP_DATA.omiyage.budget || 30000;
   omRenderList();
+  omRenderCart();
   omRecalc();
   if (OM_ITEMS.length > 0) omSelect(OM_ITEMS[0].id);
 }
@@ -2351,18 +2362,51 @@ function omSelect(id) {
   if (qty) qty.textContent = (APP_DATA.omiyage.cart[id] || 0) + '個';
 }
 
+function omChangeQtyFor(id, delta) {
+  var cart = APP_DATA.omiyage.cart;
+  var cur = cart[id] || 0;
+  var next = Math.max(0, cur + delta);
+  if (next === 0) delete cart[id];
+  else cart[id] = next;
+  omRenderList();
+  omRenderCart();
+  omRecalc();
+  if (id === omSelectedId) {
+    var qty = document.getElementById('om-qty-num');
+    if (qty) qty.textContent = (cart[id] || 0) + '個';
+  }
+  omDebouncedSave();
+}
 function omChangeQty(delta) {
   if (!omSelectedId) return;
+  omChangeQtyFor(omSelectedId, delta);
+}
+
+function omRenderCart() {
+  var listEl = document.getElementById('om-cart-list');
+  var emptyEl = document.getElementById('om-cart-empty');
+  if (!listEl) return;
   var cart = APP_DATA.omiyage.cart;
-  var cur = cart[omSelectedId] || 0;
-  var next = Math.max(0, cur + delta);
-  if (next === 0) delete cart[omSelectedId];
-  else cart[omSelectedId] = next;
-  omRenderList();
-  omRecalc();
-  var qty = document.getElementById('om-qty-num');
-  if (qty) qty.textContent = (cart[omSelectedId] || 0) + '個';
-  omDebouncedSave();
+  var entries = OM_ITEMS.filter(function(it) { return cart[it.id] > 0; });
+  if (entries.length === 0) {
+    listEl.innerHTML = '';
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  listEl.innerHTML = entries.map(function(it) {
+    var qty = cart[it.id];
+    var subtotal = it.price * qty;
+    return '<div class="om-cart-row">'
+      + '<span class="om-cart-name">' + it.name + '</span>'
+      + '<div class="om-cart-qty">'
+      + '<button class="om-qty-btn small" onclick="omChangeQtyFor(\'' + it.id + '\',-1)">－</button>'
+      + '<span>' + qty + '</span>'
+      + '<button class="om-qty-btn small" onclick="omChangeQtyFor(\'' + it.id + '\',+1)">＋</button>'
+      + '</div>'
+      + '<span class="om-cart-subtotal">¥' + subtotal.toLocaleString() + '</span>'
+      + '</div>';
+  }).join('');
 }
 
 function omRecalc() {
@@ -2962,6 +3006,13 @@ function scheToggle(btn) {
               <button class="om-qty-btn" onclick="omChangeQty(+1)">＋</button>
             </div>
           </div>
+        </div>
+
+        <!-- かご -->
+        <div id="om-cart-box">
+          <div id="om-cart-hd">🛍 かごの中身</div>
+          <div id="om-cart-list"></div>
+          <div id="om-cart-empty">まだ何も選んでいません</div>
         </div>
 
       </div>
