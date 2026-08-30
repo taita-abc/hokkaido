@@ -1827,7 +1827,7 @@ function updateReportSlot(bid, photo, comment, pos) {
   if (!slot || !thumb) return;
   var btn = slot.querySelector(".slot-upload-btn");
   if (photo) {
-    thumb.src = photo;
+    thumb.src = driveDisplayUrl(photo);
     thumb.dataset.comment = comment || "";
     thumb.dataset.posX = pos && pos.x != null ? pos.x : 50;
     thumb.dataset.posY = pos && pos.y != null ? pos.y : 50;
