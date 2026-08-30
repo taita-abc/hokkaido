@@ -1599,17 +1599,42 @@ var gasLoadPromise = null;
 
 function gasEnsureLoaded() {
   if (!gasLoadPromise) {
-    gasLoadPromise = fetch(GAS_URL)
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
+    gasLoadPromise = new Promise(function (resolve) {
+      var callbackName = 'gasJsonpCallback_' + Date.now();
+      var finished = false;
+      var script = document.createElement('script');
+      var timeoutId = setTimeout(function () {
+        if (finished) return;
+        finished = true;
+        console.error('GAS読み込みエラー（このデバイスのみの状態で続行します） タイムアウト');
+        cleanup();
+        resolve();
+      }, 10000);
+      function cleanup() {
+        clearTimeout(timeoutId);
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+      window[callbackName] = function (data) {
+        if (finished) return;
+        finished = true;
         APP_DATA.badges = (data && data.badges) || {};
         APP_DATA.album = (data && data.album) || [];
         APP_DATA.omiyage = (data && data.omiyage) || { budget: 30000, cart: {} };
         APP_DATA.bag = (data && data.bag) || {};
-      })
-      .catch(function (err) {
-        console.error('GAS読み込みエラー（このデバイスのみの状態で続行します）', err);
-      });
+        cleanup();
+        resolve();
+      };
+      script.src = GAS_URL + '?callback=' + callbackName;
+      script.onerror = function () {
+        if (finished) return;
+        finished = true;
+        console.error('GAS読み込みエラー（このデバイスのみの状態で続行します） スクリプト読み込み失敗');
+        cleanup();
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
   }
   return gasLoadPromise;
 }
@@ -1898,11 +1923,12 @@ function renderAlbum() {
     card.className = "album-card";
     var safeComment = (item.comment || "（コメントなし）").replace(/</g,"&lt;").replace(/>/g,"&gt;");
     var jsComment = escJs(item.comment || "");
-    var jsUrl = escJs(item.url);
+    var displayUrl = driveDisplayUrl(item.url);
+    var jsUrl = escJs(displayUrl);
     var posX = item.pos && item.pos.x != null ? item.pos.x : 50;
     var posY = item.pos && item.pos.y != null ? item.pos.y : 50;
     var metaJson = escJs(JSON.stringify({ kind: "album", id: item.id, comment: item.comment || "", pos: { x: posX, y: posY } }));
-    card.innerHTML = '<img src="' + item.url + '" alt="album" onclick="openPhotoPopup(\'' + jsUrl + '\',\'' + jsComment + '\', this, JSON.parse(\'' + metaJson + '\'))">'
+    card.innerHTML = '<img src="' + displayUrl + '" alt="album" onclick="openPhotoPopup(\'' + jsUrl + '\',\'' + jsComment + '\', this, JSON.parse(\'' + metaJson + '\'))">'
       + '<div class="album-card-body">'
       + '<button class="album-card-del" onclick="deleteAlbumPhoto(\'' + item.id + '\')">&#x2715;</button>'
       + '<div class="album-card-comment">' + safeComment + '</div>'
@@ -2125,6 +2151,13 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function() { el.classList.remove("show"); }, 2200);
 }
+// GoogleドライブのURLを、ログイン状態に依存しない表示用URLに変換
+function driveDisplayUrl(url) {
+  if (!url) return url;
+  var m = url.match(/[?&]id=([^&]+)/);
+  if (m && m[1]) return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1000';
+  return url;
+}
 async function gasMigrateBadgesToLocal() {
   var ids = Object.keys(APP_DATA.badges || {});
   for (var i = 0; i < ids.length; i++) {
@@ -2135,7 +2168,7 @@ async function gasMigrateBadgesToLocal() {
     var localTime = local && local.timestamp ? new Date(local.timestamp).getTime() : 0;
     var sharedTime = shared.timestamp ? new Date(shared.timestamp).getTime() : 0;
     if (!local || sharedTime > localTime) {
-      await dbPut("badge_photos", { id: bid, photo: shared.url, timestamp: shared.timestamp || new Date().toISOString(), comment: shared.comment || "" });
+      await dbPut("badge_photos", { id: bid, photo: driveDisplayUrl(shared.url), timestamp: shared.timestamp || new Date().toISOString(), comment: shared.comment || "" });
     }
   }
 }
